@@ -1,0 +1,129 @@
+; Engine configuration file.
+; It's best edited using the editor UI and not directly,
+; since the parameters that go here are not all obvious.
+;
+; Format:
+;   [section] ; section goes between []
+;   param=value ; assign values to parameters
+
+config_version=5
+
+_global_script_classes=[{
+"base": "NesinkronaAwaitable",
+"class": &"Async",
+"language": &"GDScript",
+"path": "res://addons/godot-nesink/Async.gd"
+}, {
+"base": "NesinkronaAwaitable",
+"class": &"AsyncSequence",
+"language": &"GDScript",
+"path": "res://addons/godot-nesink/AsyncSequence.gd"
+}, {
+"base": "RefCounted",
+"class": &"Cancel",
+"language": &"GDScript",
+"path": "res://addons/godot-nesink/Cancel.gd"
+}, {
+"base": "NesinkronaAsyncBase",
+"class": &"NesinkronaAllAsync",
+"language": &"GDScript",
+"path": "res://addons/godot-nesink/NesinkronaAllAsync.gd"
+}, {
+"base": "NesinkronaAsyncBase",
+"class": &"NesinkronaAllSettledAsync",
+"language": &"GDScript",
+"path": "res://addons/godot-nesink/NesinkronaAllSettledAsync.gd"
+}, {
+"base": "NesinkronaAsyncBase",
+"class": &"NesinkronaAnyAsync",
+"language": &"GDScript",
+"path": "res://addons/godot-nesink/NesinkronaAnyAsync.gd"
+}, {
+"base": "Async",
+"class": &"NesinkronaAsyncBase",
+"language": &"GDScript",
+"path": "res://addons/godot-nesink/NesinkronaAsyncBase.gd"
+}, {
+"base": "RefCounted",
+"class": &"NesinkronaAwaitable",
+"language": &"GDScript",
+"path": "res://addons/godot-nesink/NesinkronaAwaitable.gd"
+}, {
+"base": "Async",
+"class": &"NesinkronaCanceledAsync",
+"language": &"GDScript",
+"path": "res://addons/godot-nesink/NesinkronaCanceledAsync.gd"
+}, {
+"base": "Async",
+"class": &"NesinkronaCompletedAsync",
+"language": &"GDScript",
+"path": "res://addons/godot-nesink/NesinkronaCompletedAsync.gd"
+}, {
+"base": "NesinkronaAsyncBase",
+"class": &"NesinkronaDelayAsync",
+"language": &"GDScript",
+"path": "res://addons/godot-nesink/NesinkronaDelayAsync.gd"
+}, {
+"base": "NesinkronaAsyncBase",
+"class": &"NesinkronaFromAsync",
+"language": &"GDScript",
+"path": "res://addons/godot-nesink/NesinkronaFromAsync.gd"
+}, {
+"base": "NesinkronaAsyncBase",
+"class": &"NesinkronaFromSignalAsync",
+"language": &"GDScript",
+"path": "res://addons/godot-nesink/NesinkronaFromSignalAsync.gd"
+}, {
+"base": "NesinkronaAsyncBase",
+"class": &"NesinkronaFromSignalNameAsync",
+"language": &"GDScript",
+"path": "res://addons/godot-nesink/NesinkronaFromSignalNameAsync.gd"
+}, {
+"base": "NesinkronaAsyncBase",
+"class": &"NesinkronaRaceAsync",
+"language": &"GDScript",
+"path": "res://addons/godot-nesink/NesinkronaRaceAsync.gd"
+}, {
+"base": "NesinkronaAsyncBase",
+"class": &"NesinkronaThenAsync",
+"language": &"GDScript",
+"path": "res://addons/godot-nesink/NesinkronaThenAsync.gd"
+}]
+_global_script_class_icons={
+"Async": "",
+"AsyncSequence": "",
+"Cancel": "",
+"NesinkronaAllAsync": "",
+"NesinkronaAllSettledAsync": "",
+"NesinkronaAnyAsync": "",
+"NesinkronaAsyncBase": "",
+"NesinkronaAwaitable": "",
+"NesinkronaCanceledAsync": "",
+"NesinkronaCompletedAsync": "",
+"NesinkronaDelayAsync": "",
+"NesinkronaFromAsync": "",
+"NesinkronaFromSignalAsync": "",
+"NesinkronaFromSignalNameAsync": "",
+"NesinkronaRaceAsync": "",
+"NesinkronaThenAsync": ""
+}
+
+[application]
+
+config/name="godot-nesink"
+config/description="Pseudo (task based) asynchronous patterns for Godot 4."
+run/main_scene="res://demos/Demo_TestAsync.tscn"
+config/features=PackedStringArray("4.0", "Vulkan Mobile")
+config/icon="res://icon.svg"
+
+[autoload]
+
+NesinkronaCanon="*res://addons/godot-nesink/NesinkronaCanon.gd"
+
+[editor_plugins]
+
+enabled=PackedStringArray("res://addons/godot-nesink/plugin.cfg")
+
+[rendering]
+
+vulkan/rendering/back_end=1
