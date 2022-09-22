@@ -1,167 +1,24 @@
 extends Control
 
-class _TestCase:
+func case(name_: String, test_method: Callable) -> void:
+	_test_cases.push_back(TestCase.new(_tree, name_, test_method))
 
-	signal signal_0
-	signal signal_1(arg1)
-	signal signal_2(arg1, arg2)
-	signal signal_3(arg1, arg2, arg3)
-	signal signal_4(arg1, arg2, arg3, arg4)
-	signal signal_5(arg1, arg2, arg3, arg4, arg5)
-
-	var _tree: SceneTree
-	var _name: String
-	var _test_index := 0
-	var _pass := 0
-	var _fail_logs := []
-
-	func _init(tree: SceneTree, name: String) -> void:
-		_tree = tree
-		_name = name
-
-	func _report() -> void:
-		var text := _name + "\n"
-		text += "\tpass "
-		text += str(_pass)
-		text += " / "
-		text += str(_pass + len(_fail_logs))
-		if len(_fail_logs) == 0:
-			print(text)
-			return
-
-		text += "\n\tfail "
-		text += str(len(_fail_logs))
-		text += "\n"
-
-		for log in _fail_logs:
-			text += "\t\t"
-			text += log
-			text += "\n"
-
-		printerr(text)
-
-#	func run(f: Callable):
-#		# おまじない
-#		var thunk := func():
-#			@warning_ignore(redundant_await)
-#			await f.call(_assert)
-#			if 0 < len(_fail_indices):
-#				printerr(_name)
-#			else:
-#				print(_name)
-#			print("  pass %d" % _pass)
-#			if 0 < len(_fail_indices):
-#				print("  fail %d <<< %s" % [len(_fail_indices), str(_fail_indices)])
-#			unreference()
-#		reference()
-#		thunk.call()
-
-	func expect(expect_value, actual_value, marker = null):
-		if expect_value == actual_value:
-			_pass += 1
-		elif marker is String:
-			_fail_logs.append("[#%d: %s] Expected %s, Actual %s" % [_test_index, marker, str(expect_value), str(actual_value)])
-		else:
-			_fail_logs.append("[#%d] Expected %s, Actual %s" % [_test_index, str(expect_value), str(actual_value)])
-		_test_index += 1
-		return actual_value
-
-	func is_true(actual_value: bool, marker = null):
-		return expect(true, actual_value, marker)
-
-	func is_false(actual_value: bool, marker = null):
-		return expect(false, actual_value, marker)
-
-	func is_null(actual_value, marker = null):
-		return expect(null, actual_value, marker)
-
-	func is_not_null(actual_value, marker = null):
-		is_true(actual_value != null, marker)
-		return actual_value
-
-	class _Timer:
-
-		var _test_case
-		var _expect_delta: float
-		var _start_ticks
-
-		func _init(test_case: _TestCase, expect_delta: float) -> void:
-			_test_case = test_case
-			_expect_delta = expect_delta
-			_start_ticks = Time.get_ticks_msec()
-
-		func stop(epsilon := 0.05, marker = null) -> void:
-			var delta: float = (Time.get_ticks_msec() - _start_ticks) / 1000.0 - _expect_delta
-			if marker is String:
-				_test_case.is_true(abs(delta) <= epsilon, marker)
-			else:
-				_test_case.is_true(abs(delta) <= epsilon, "誤差 |%.3f|s が許容範囲 %.3fs を上回った" % [delta - _expect_delta, epsilon])
-
-	func timer(expect_delta: float):
-		return _Timer.new(self, expect_delta)
-
-	func delay(timeout: float) -> void:
-		await _tree.create_timer(timeout).timeout
-
-	func delay_cancel(timeout: float) -> Cancel:
-		var cancel := Cancel.new()
-		_tree.create_timer(timeout).timeout.connect(cancel.request)
-		return cancel
-
-	func emit_0() -> void:
-		signal_0.emit()
-
-	func emit_1(arg1) -> void:
-		signal_1.emit(arg1)
-
-	func emit_2(arg1, arg2) -> void:
-		signal_2.emit(arg1, arg2)
-
-	func emit_3(arg1, arg2, arg3) -> void:
-		signal_3.emit(arg1, arg2, arg3)
-
-	func emit_4(arg1, arg2, arg3, arg4) -> void:
-		signal_4.emit(arg1, arg2, arg3, arg4)
-
-	func emit_5(arg1, arg2, arg3, arg4, arg5) -> void:
-		signal_5.emit(arg1, arg2, arg3, arg4, arg5)
-
-	func delay_emit_0(timeout: float) -> void:
-		_tree.create_timer(timeout).timeout.connect(emit_0)
-
-	func delay_emit_1(timeout: float, arg1) -> void:
-		_tree.create_timer(timeout).timeout.connect(emit_1.bind(arg1))
-
-	func delay_emit_2(timeout: float, arg1, arg2) -> void:
-		_tree.create_timer(timeout).timeout.connect(emit_2.bind(arg1, arg2))
-
-	func delay_emit_3(timeout: float, arg1, arg2, arg3) -> void:
-		_tree.create_timer(timeout).timeout.connect(emit_3.bind(arg1, arg2, arg3))
-
-	func delay_emit_4(timeout: float, arg1, arg2, arg3, arg4) -> void:
-		_tree.create_timer(timeout).timeout.connect(emit_4.bind(arg1, arg2, arg3, arg4))
-
-	func delay_emit_5(timeout: float, arg1, arg2, arg3, arg4, arg5) -> void:
-		_tree.create_timer(timeout).timeout.connect(emit_5.bind(arg1, arg2, arg3, arg4, arg5))
+func report() -> void:
+	for test_case in _test_cases:
+		await test_case.run()
+	print("======== END ========")
 
 @onready var _tree := get_tree()
-
-func case(name: String, case: Callable) -> void:
-	var test_case := _TestCase.new(_tree, name)
-	@warning_ignore(redundant_await)
-	await case.call(test_case)
-	test_case._report()
+var _test_cases: Array[TestCase] = []
 
 func _ready():
 
 	case("Async.completed()", func(test):
-		# 結果なし
 		var a1 := Async.completed()
 		test.is_true(a1.is_completed)
 		test.is_false(a1.is_canceled)
 		test.is_null(await a1.wait())
 
-		# 結果あり
 		var a2 := Async.completed(1234)
 		test.is_true(a2.is_completed)
 		test.is_false(a2.is_canceled)
@@ -176,44 +33,36 @@ func _ready():
 	)
 
 	case("Async.from()", func(test):
-		# 待機が生じないパターン #1
 		var a1 := Async.from(func(): return)
-		test.is_true(a1.is_completed, "awaitable ではないコルーチンに対して待機が発生している")
+		test.is_true(a1.is_completed)
 		test.is_null(await a1.wait())
 
-		# 待機が生じないパターン #2
 		var a2 := Async.from(func(): return 1234)
-		test.is_true(a2.is_completed, "awaitable ではないコルーチンに対して待機が発生している")
+		test.is_true(a2.is_completed)
 		test.expect(1234, await a2.wait())
 
-		# 待機しなくてはならないパターン #1
 		var a3 := Async.from(func(): await test.delay(0.2))
-		test.is_false(a3.is_completed, "awaitable であるコルーチンに対して待機が発生している")
+		test.is_false(a3.is_completed)
 		test.is_null(await a3.wait())
 		test.is_true(a3.is_completed)
 
-		# 待機しなくてはならないパターン #2
 		var a4 := Async.from(func(): await test.delay(0.2); return 1234)
-		test.is_false(a4.is_completed, "awaitable であるコルーチンに対して待機が発生している")
+		test.is_false(a4.is_completed)
 		test.expect(1234, await a4.wait())
 		test.is_true(a4.is_completed)
 
 		var a5 := Async.from(func(): await test.delay(0.2))
-		test.is_false(a5.is_completed, "awaitable であるコルーチンに対して待機が発生していない可能性があります")
+		test.is_false(a5.is_completed)
 		test.is_null(await a5.wait(test.delay_cancel(0.1)))
 		test.is_true(a5.is_canceled)
 
 		var a6 := Async.from(func(): await test.delay(0.2); return 1234)
-		test.is_false(a6.is_completed, "awaitable であるコルーチンに対して待機が発生していない可能性があります")
+		test.is_false(a6.is_completed)
 		test.is_null(await a6.wait(test.delay_cancel(0.1)))
 		test.is_true(a6.is_canceled)
 	)
 
 	case("Async.from_signal()", func(test):
-		#
-		# キャンセルなし
-		#
-
 		var a1 := Async.from_signal(test.signal_0)
 		test.is_false(a1.is_completed)
 		test.delay_emit_0(0.1)
@@ -249,10 +98,6 @@ func _ready():
 		test.delay_emit_5(0.1, 1234, "abcd", true, null, 0.5)
 		test.expect([1234, "abcd", true, null, 0.5], await a6.wait())
 		test.is_true(a6.is_completed)
-
-		#
-		# キャンセルあり
-		#
 
 		var a7 := Async.from_signal(test.signal_0)
 		test.is_false(a7.is_completed)
@@ -292,10 +137,6 @@ func _ready():
 	)
 
 	case("Async.from_signal_name()", func(test):
-		#
-		# キャンセルなし
-		#
-
 		var a1 := Async.from_signal_name(test, "signal_0")
 		test.is_false(a1.is_completed)
 		test.delay_emit_0(0.1)
@@ -331,10 +172,6 @@ func _ready():
 		test.delay_emit_5(0.1, 1234, "abcd", true, null, 0.5)
 		test.expect([1234, "abcd", true, null, 0.5], await a6.wait())
 		test.is_true(a6.is_completed)
-
-		#
-		# キャンセルあり
-		#
 
 		var a7 := Async.from_signal_name(test, "signal_0")
 		test.is_false(a7.is_completed)
@@ -781,8 +618,9 @@ func _ready():
 			Async.canceled(),
 			Async.canceled(),
 		])
-		test.is_true(a5.is_canceled)
-		test.is_null(await a5.wait())
+		test.is_true(a5.is_completed)
+		var a5_r = test.is_not_null(await a5.wait())
+		test.is_true(a5_r.is_canceled)
 
 		var a6 := Async.race([
 			Async.completed("aaaa"),
@@ -800,8 +638,9 @@ func _ready():
 			Async.delay(2.0),
 			Async.delay(3.0),
 		], c7)
-		test.is_true(a7.is_canceled)
-		test.is_null(await a7.wait())
+		test.is_true(a7.is_completed)
+		var a7_r = test.is_not_null(await a7.wait())
+		test.is_true(a7_r.is_canceled)
 
 		var a8 := Async.race([
 			Async.delay(0.125),
@@ -930,3 +769,5 @@ func _ready():
 		test.is_false(a7_r.is_completed)
 		test.expect(0.25, await a7_r.wait())
 	)
+
+	await report()

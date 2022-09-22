@@ -7,7 +7,7 @@ extends Node
 func create_timer(timeout: float) -> SceneTreeTimer:
 	return _tree.create_timer(timeout)
 
-func create_completed(result = null) -> Async:
+func create_completed_async(result = null) -> Async:
 	return \
 		_completed_async \
 		if result == null else \
@@ -15,8 +15,11 @@ func create_completed(result = null) -> Async:
 		
 	return _completed_async
 
-func create_canceled() -> Async:
+func create_canceled_async() -> Async:
 	return _canceled_async
+
+func create_canceled_cancel() -> Cancel:
+	return _canceled_cancel
 
 #-------------------------------------------------------------------------------
 
@@ -24,3 +27,7 @@ func create_canceled() -> Async:
 var _tree := get_tree()
 var _completed_async := NesinkronaCompletedAsync.new(null)
 var _canceled_async := NesinkronaCanceledAsync.new()
+var _canceled_cancel := Cancel.new()
+
+func _init() -> void:
+	_canceled_cancel.request()

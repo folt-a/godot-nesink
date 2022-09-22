@@ -32,10 +32,10 @@ func _init_flight(
 		match drain_state:
 			STATE_CANCELED:
 				drain_result = drain if drain is Async else \
-					NesinkronaCanon.create_canceled()
+					NesinkronaCanon.create_canceled_async()
 			STATE_COMPLETED:
 				drain_result = drain if drain is Async else \
-					NesinkronaCompletedAsync.new(drain_result)
+					NesinkronaCanon.create_completed_async(drain_result)
 			_:
 				assert(false) # BUG
 	else:
@@ -52,11 +52,12 @@ func _init_flight(
 					complete_release(drain_result)
 		STATE_CANCELED:
 			if _drain_pending == 0:
+				drain_result = NesinkronaCanon.create_canceled_async()
 				match get_state():
 					STATE_PENDING:
-						cancel()
+						complete(drain_result)
 					STATE_PENDING_WITH_WAITERS:
-						cancel_release()
+						complete_release(drain_result)
 
 	unreference()
 

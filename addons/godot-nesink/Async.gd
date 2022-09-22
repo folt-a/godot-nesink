@@ -18,7 +18,7 @@ class_name Async extends NesinkronaAwaitable
 ##     assert(await async.wait() == "result")
 ##     [/codeblock]
 static func completed(result = null) -> Async:
-	return NesinkronaCanon.create_completed(result)
+	return NesinkronaCanon.create_completed_async(result)
 
 ## キャンセルされた状態の [Async] を作成します。[br]
 ## [br]
@@ -29,7 +29,7 @@ static func completed(result = null) -> Async:
 ##     assert(await async.wait() == null)
 ##     [/codeblock]
 static func canceled() -> Async:
-	return NesinkronaCanon.create_canceled()
+	return NesinkronaCanon.create_canceled_async()
 
 ## コルーチン (もしくは関数) の戻り値を結果として完了する [Async] を作成します。[br]
 ## [br]
@@ -194,7 +194,7 @@ static func all_settled(
 	cancel: Cancel = null) -> Async:
 
 	return \
-		NesinkronaCanon.create_completed([]) \
+		NesinkronaCanon.create_completed_async([]) \
 		if drains == null or 0 == len(drains) else \
 		NesinkronaAllSettledAsync.new(drains, cancel)
 
@@ -223,7 +223,7 @@ static func any(
 	cancel: Cancel = null) -> Async:
 
 	return \
-		NesinkronaCanon.create_canceled() \
+		NesinkronaCanon.create_canceled_async() \
 		if cancel and cancel.is_requested or drains == null or 0 == len(drains) else \
 		NesinkronaAnyAsync.new(drains, cancel)
 
@@ -379,7 +379,7 @@ func unwrap(
 
 	assert(0 <= depth)
 	return \
-		NesinkronaCanon.create_canceled() \
+		NesinkronaCanon.create_canceled_async() \
 		if cancel and cancel.is_requested or is_canceled else \
 		self \
 		if depth == 0 else \

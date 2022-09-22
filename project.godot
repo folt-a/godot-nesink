@@ -98,6 +98,16 @@ _global_script_classes=[{
 "class": &"NesinkronaUnwrapAsync",
 "language": &"GDScript",
 "path": "res://addons/godot-nesink/NesinkronaUnwrapAsync.gd"
+}, {
+"base": "RefCounted",
+"class": &"TestCase",
+"language": &"GDScript",
+"path": "res://tests/utils/TestCase.gd"
+}, {
+"base": "RefCounted",
+"class": &"TestTimer",
+"language": &"GDScript",
+"path": "res://tests/utils/TestTimer.gd"
 }]
 _global_script_class_icons={
 "Async": "",
@@ -117,14 +127,16 @@ _global_script_class_icons={
 "NesinkronaFromSignalNameAsync": "",
 "NesinkronaRaceAsync": "",
 "NesinkronaThenAsync": "",
-"NesinkronaUnwrapAsync": ""
+"NesinkronaUnwrapAsync": "",
+"TestCase": "",
+"TestTimer": ""
 }
 
 [application]
 
 config/name="godot-nesink"
 config/description="Pseudo (task based) asynchronous patterns for Godot 4."
-run/main_scene="res://demos/Demo_TestAsync.tscn"
+run/main_scene="res://demos/Demo.tscn"
 config/features=PackedStringArray("4.0", "Vulkan Mobile")
 config/icon="res://icon.svg"
 

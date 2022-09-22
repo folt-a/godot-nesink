@@ -1,0 +1,362 @@
+[gd_scene load_steps=2 format=3 uid="uid://bno0o02ykq88i"]
+
+[ext_resource type="Script" path="res://demos/Demo.gd" id="1_ymenf"]
+
+[node name="Demo" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_ymenf")
+
+[node name="Description" type="Label" parent="."]
+layout_mode = 0
+offset_left = 64.0
+offset_top = 576.0
+offset_right = 1088.0
+offset_bottom = 640.0
+text = "To use this add-on, you must copy \"res://addons/godot-nesink\" to your project and activate this add-on. If you need to see of what we are doing in this demo, please see Demo.gd."
+autowrap_mode = 3
+
+[node name="AsyncAll" type="Button" parent="."]
+layout_mode = 0
+offset_left = 64.0
+offset_top = 64.0
+offset_right = 280.0
+offset_bottom = 95.0
+text = "Async.all()"
+
+[node name="AsyncAllCancel" type="Button" parent="."]
+layout_mode = 0
+offset_left = 288.0
+offset_top = 64.0
+offset_right = 376.0
+offset_bottom = 95.0
+text = "Cancel"
+
+[node name="AsyncAllStatus" type="Panel" parent="."]
+layout_mode = 0
+offset_left = 384.0
+offset_top = 64.0
+offset_right = 768.0
+offset_bottom = 96.0
+
+[node name="_1" type="CheckBox" parent="AsyncAllStatus"]
+layout_mode = 0
+offset_right = 64.0
+offset_bottom = 32.0
+disabled = true
+text = "#1"
+metadata/_edit_lock_ = true
+
+[node name="_2" type="CheckBox" parent="AsyncAllStatus"]
+layout_mode = 1
+offset_left = 64.0
+offset_right = 128.0
+offset_bottom = 32.0
+disabled = true
+text = "#2"
+metadata/_edit_lock_ = true
+
+[node name="_3" type="CheckBox" parent="AsyncAllStatus"]
+layout_mode = 1
+offset_left = 128.0
+offset_right = 192.0
+offset_bottom = 32.0
+disabled = true
+text = "#3"
+metadata/_edit_lock_ = true
+
+[node name="_4" type="CheckBox" parent="AsyncAllStatus"]
+layout_mode = 1
+offset_left = 192.0
+offset_right = 256.0
+offset_bottom = 32.0
+disabled = true
+text = "#4"
+metadata/_edit_lock_ = true
+
+[node name="Label" type="Label" parent="AsyncAllStatus"]
+layout_mode = 0
+offset_left = 256.0
+offset_right = 384.0
+offset_bottom = 32.0
+text = "Not evaluated."
+vertical_alignment = 1
+metadata/_edit_lock_ = true
+
+[node name="AsyncAllSettled" type="Button" parent="."]
+layout_mode = 1
+offset_left = 64.0
+offset_top = 112.0
+offset_right = 280.0
+offset_bottom = 143.0
+text = "Async.all_settled()"
+
+[node name="AsyncAllSettledCancel" type="Button" parent="."]
+layout_mode = 1
+offset_left = 288.0
+offset_top = 112.0
+offset_right = 376.0
+offset_bottom = 143.0
+text = "Cancel"
+
+[node name="AsyncAllSettledStatus" type="Panel" parent="."]
+layout_mode = 1
+offset_left = 384.0
+offset_top = 112.0
+offset_right = 768.0
+offset_bottom = 144.0
+
+[node name="_1" type="CheckBox" parent="AsyncAllSettledStatus"]
+layout_mode = 1
+offset_right = 64.0
+offset_bottom = 32.0
+disabled = true
+text = "#1"
+metadata/_edit_lock_ = true
+
+[node name="_2" type="CheckBox" parent="AsyncAllSettledStatus"]
+layout_mode = 1
+offset_left = 64.0
+offset_right = 128.0
+offset_bottom = 32.0
+disabled = true
+text = "#2"
+metadata/_edit_lock_ = true
+
+[node name="_3" type="CheckBox" parent="AsyncAllSettledStatus"]
+layout_mode = 1
+offset_left = 128.0
+offset_right = 192.0
+offset_bottom = 32.0
+disabled = true
+text = "#3"
+metadata/_edit_lock_ = true
+
+[node name="_4" type="CheckBox" parent="AsyncAllSettledStatus"]
+layout_mode = 1
+offset_left = 192.0
+offset_right = 256.0
+offset_bottom = 32.0
+disabled = true
+text = "#4"
+metadata/_edit_lock_ = true
+
+[node name="Label" type="Label" parent="AsyncAllSettledStatus"]
+layout_mode = 0
+offset_left = 256.0
+offset_right = 384.0
+offset_bottom = 32.0
+text = "Not evaluated."
+vertical_alignment = 1
+metadata/_edit_lock_ = true
+
+[node name="AsyncAny" type="Button" parent="."]
+layout_mode = 1
+offset_left = 64.0
+offset_top = 160.0
+offset_right = 280.0
+offset_bottom = 191.0
+text = "Async.any()"
+
+[node name="AsyncAnyCancel" type="Button" parent="."]
+layout_mode = 1
+offset_left = 288.0
+offset_top = 160.0
+offset_right = 376.0
+offset_bottom = 191.0
+text = "Cancel"
+
+[node name="AsyncAnyStatus" type="Panel" parent="."]
+layout_mode = 1
+offset_left = 384.0
+offset_top = 160.0
+offset_right = 768.0
+offset_bottom = 192.0
+
+[node name="_1" type="CheckBox" parent="AsyncAnyStatus"]
+layout_mode = 1
+offset_right = 64.0
+offset_bottom = 32.0
+disabled = true
+text = "#1"
+metadata/_edit_lock_ = true
+
+[node name="_2" type="CheckBox" parent="AsyncAnyStatus"]
+layout_mode = 1
+offset_left = 64.0
+offset_right = 128.0
+offset_bottom = 32.0
+disabled = true
+text = "#2"
+metadata/_edit_lock_ = true
+
+[node name="_3" type="CheckBox" parent="AsyncAnyStatus"]
+layout_mode = 1
+offset_left = 128.0
+offset_right = 192.0
+offset_bottom = 32.0
+disabled = true
+text = "#3"
+metadata/_edit_lock_ = true
+
+[node name="_4" type="CheckBox" parent="AsyncAnyStatus"]
+layout_mode = 1
+offset_left = 192.0
+offset_right = 256.0
+offset_bottom = 32.0
+disabled = true
+text = "#4"
+metadata/_edit_lock_ = true
+
+[node name="Label" type="Label" parent="AsyncAnyStatus"]
+layout_mode = 1
+offset_left = 256.0
+offset_right = 384.0
+offset_bottom = 32.0
+text = "Not evaluated."
+vertical_alignment = 1
+metadata/_edit_lock_ = true
+
+[node name="AsyncRace" type="Button" parent="."]
+layout_mode = 1
+offset_left = 64.0
+offset_top = 208.0
+offset_right = 280.0
+offset_bottom = 239.0
+text = "Async.race()"
+
+[node name="AsyncRaceCancel" type="Button" parent="."]
+layout_mode = 1
+offset_left = 288.0
+offset_top = 208.0
+offset_right = 376.0
+offset_bottom = 239.0
+text = "Cancel"
+
+[node name="AsyncRaceStatus" type="Panel" parent="."]
+layout_mode = 1
+offset_left = 384.0
+offset_top = 208.0
+offset_right = 768.0
+offset_bottom = 240.0
+
+[node name="_1" type="CheckBox" parent="AsyncRaceStatus"]
+layout_mode = 1
+offset_right = 64.0
+offset_bottom = 32.0
+disabled = true
+text = "#1"
+metadata/_edit_lock_ = true
+
+[node name="_2" type="CheckBox" parent="AsyncRaceStatus"]
+layout_mode = 1
+offset_left = 64.0
+offset_right = 128.0
+offset_bottom = 32.0
+disabled = true
+text = "#2"
+metadata/_edit_lock_ = true
+
+[node name="_3" type="CheckBox" parent="AsyncRaceStatus"]
+layout_mode = 1
+offset_left = 128.0
+offset_right = 192.0
+offset_bottom = 32.0
+disabled = true
+text = "#3"
+metadata/_edit_lock_ = true
+
+[node name="_4" type="CheckBox" parent="AsyncRaceStatus"]
+layout_mode = 1
+offset_left = 192.0
+offset_right = 256.0
+offset_bottom = 32.0
+disabled = true
+text = "#4"
+metadata/_edit_lock_ = true
+
+[node name="Label" type="Label" parent="AsyncRaceStatus"]
+layout_mode = 1
+offset_left = 256.0
+offset_right = 384.0
+offset_bottom = 32.0
+text = "Not evaluated."
+vertical_alignment = 1
+metadata/_edit_lock_ = true
+
+[node name="AsyncThen" type="Button" parent="."]
+layout_mode = 1
+offset_left = 64.0
+offset_top = 256.0
+offset_right = 280.0
+offset_bottom = 287.0
+text = "async.then()"
+
+[node name="AsyncThenCancel" type="Button" parent="."]
+layout_mode = 1
+offset_left = 288.0
+offset_top = 256.0
+offset_right = 376.0
+offset_bottom = 287.0
+text = "Cancel"
+
+[node name="AsyncThenStatus" type="Panel" parent="."]
+layout_mode = 1
+offset_left = 384.0
+offset_top = 256.0
+offset_right = 768.0
+offset_bottom = 288.0
+
+[node name="_1" type="CheckBox" parent="AsyncThenStatus"]
+layout_mode = 1
+offset_right = 64.0
+offset_bottom = 32.0
+disabled = true
+text = "#1"
+metadata/_edit_lock_ = true
+
+[node name="_2" type="CheckBox" parent="AsyncThenStatus"]
+layout_mode = 1
+offset_left = 64.0
+offset_right = 128.0
+offset_bottom = 32.0
+disabled = true
+text = "#2"
+metadata/_edit_lock_ = true
+
+[node name="_3" type="CheckBox" parent="AsyncThenStatus"]
+layout_mode = 1
+offset_left = 128.0
+offset_right = 192.0
+offset_bottom = 32.0
+disabled = true
+text = "#3"
+metadata/_edit_lock_ = true
+
+[node name="_4" type="CheckBox" parent="AsyncThenStatus"]
+layout_mode = 1
+offset_left = 192.0
+offset_right = 256.0
+offset_bottom = 32.0
+disabled = true
+text = "#4"
+metadata/_edit_lock_ = true
+
+[node name="Label" type="Label" parent="AsyncThenStatus"]
+layout_mode = 1
+offset_left = 256.0
+offset_right = 384.0
+offset_bottom = 32.0
+text = "Not evaluated."
+vertical_alignment = 1
+metadata/_edit_lock_ = true
+
+[connection signal="pressed" from="AsyncAll" to="." method="_on_async_all_pressed"]
+[connection signal="pressed" from="AsyncAllSettled" to="." method="_on_async_all_settled_pressed"]
+[connection signal="pressed" from="AsyncAny" to="." method="_on_async_any_pressed"]
+[connection signal="pressed" from="AsyncRace" to="." method="_on_async_race_pressed"]
+[connection signal="pressed" from="AsyncThen" to="." method="_on_async_then_pressed"]
