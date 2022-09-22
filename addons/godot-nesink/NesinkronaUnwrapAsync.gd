@@ -1,25 +1,33 @@
-class_name NesinkronaThenAsync extends NesinkronaAsyncBase
+class_name NesinkronaUnwrapAsync extends NesinkronaAsyncBase
 
 #---------------------------------------------------------------------------------------------------
 
 func _init(
 	drain: Async,
 	drain_cancel: Cancel,
-	coroutine: Callable) -> void:
+	depth: int) -> void:
+
+	assert(0 < depth)
+	assert(drain_cancel == null or not drain_cancel.is_requested)
 
 	_init_flight(
 		drain,
 		drain_cancel,
-		coroutine)
+		depth)
 
 func _init_flight(
-	drain: Async,
+	drain, #: Async,
 	drain_cancel: Cancel,
-	coroutine: Callable) -> void:
+	depth: int) -> void:
 
 	reference()
 
 	var drain_result = await drain.wait(drain_cancel)
+	while drain_result is Async and depth != 0:
+		drain = drain_result
+		drain_result = await drain.wait(drain_cancel)
+		depth -= 1
+
 	match drain.get_state():
 		STATE_CANCELED:
 			match get_state():
@@ -28,15 +36,11 @@ func _init_flight(
 				STATE_PENDING_WITH_WAITERS:
 					cancel_release()
 		STATE_COMPLETED:
-			var result = \
-				await coroutine.call() \
-				if drain_result == null else \
-				await coroutine.call(drain_result)
 			match get_state():
 				STATE_PENDING:
-					complete(result)
+					complete(drain_result)
 				STATE_PENDING_WITH_WAITERS:
-					complete_release(result)
+					complete_release(drain_result)
 		_:
 			assert(false) # BUG
 

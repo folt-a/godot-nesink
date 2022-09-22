@@ -14,7 +14,7 @@ _global_script_classes=[{
 "language": &"GDScript",
 "path": "res://addons/godot-nesink/Async.gd"
 }, {
-"base": "NesinkronaAwaitable",
+"base": "Async",
 "class": &"AsyncSequence",
 "language": &"GDScript",
 "path": "res://addons/godot-nesink/AsyncSequence.gd"
@@ -43,6 +43,11 @@ _global_script_classes=[{
 "class": &"NesinkronaAsyncBase",
 "language": &"GDScript",
 "path": "res://addons/godot-nesink/NesinkronaAsyncBase.gd"
+}, {
+"base": "AsyncSequence",
+"class": &"NesinkronaAsyncSequence",
+"language": &"GDScript",
+"path": "res://addons/godot-nesink/NesinkronaAsyncSequence.gd"
 }, {
 "base": "RefCounted",
 "class": &"NesinkronaAwaitable",
@@ -88,6 +93,11 @@ _global_script_classes=[{
 "class": &"NesinkronaThenAsync",
 "language": &"GDScript",
 "path": "res://addons/godot-nesink/NesinkronaThenAsync.gd"
+}, {
+"base": "NesinkronaAsyncBase",
+"class": &"NesinkronaUnwrapAsync",
+"language": &"GDScript",
+"path": "res://addons/godot-nesink/NesinkronaUnwrapAsync.gd"
 }]
 _global_script_class_icons={
 "Async": "",
@@ -97,6 +107,7 @@ _global_script_class_icons={
 "NesinkronaAllSettledAsync": "",
 "NesinkronaAnyAsync": "",
 "NesinkronaAsyncBase": "",
+"NesinkronaAsyncSequence": "",
 "NesinkronaAwaitable": "",
 "NesinkronaCanceledAsync": "",
 "NesinkronaCompletedAsync": "",
@@ -105,7 +116,8 @@ _global_script_class_icons={
 "NesinkronaFromSignalAsync": "",
 "NesinkronaFromSignalNameAsync": "",
 "NesinkronaRaceAsync": "",
-"NesinkronaThenAsync": ""
+"NesinkronaThenAsync": "",
+"NesinkronaUnwrapAsync": ""
 }
 
 [application]

@@ -155,15 +155,17 @@ func case(name: String, case: Callable) -> void:
 func _ready():
 
 	case("Async.completed()", func(test):
+		# 結果なし
 		var a1 := Async.completed()
 		test.is_true(a1.is_completed)
 		test.is_false(a1.is_canceled)
 		test.is_null(await a1.wait())
 
+		# 結果あり
 		var a2 := Async.completed(1234)
 		test.is_true(a2.is_completed)
 		test.is_false(a2.is_canceled)
-		test.expect(await a2.wait(), 1234)
+		test.expect(1234, await a2.wait())
 	)
 
 	case("Async.canceled()", func(test):
@@ -174,44 +176,33 @@ func _ready():
 	)
 
 	case("Async.from()", func(test):
+		# 待機が生じないパターン #1
 		var a1 := Async.from(func(): return)
-		test.is_true(a1.is_completed, "awaitable ではないコルーチンに対して待機が発生している可能性があります")
+		test.is_true(a1.is_completed, "awaitable ではないコルーチンに対して待機が発生している")
 		test.is_null(await a1.wait())
 
+		# 待機が生じないパターン #2
 		var a2 := Async.from(func(): return 1234)
-		test.is_true(a2.is_completed, "awaitable ではないコルーチンに対して待機が発生している可能性があります")
+		test.is_true(a2.is_completed, "awaitable ではないコルーチンに対して待機が発生している")
 		test.expect(1234, await a2.wait())
 
-		#
-		# メモ:
-		#
-		# 以下 Async.from について、NesinkronaFromAsync コンストラクタ内でコルーチン側へインストラクションを
-		# 分岐 (実装内 _init_flight) すると、awaitable である Callable を受け取った場合よくわからない挙動を示す。
-		#
-		# awaitable な Callable を await するサンク関数を挟み await する、という条件で
-		# 必ずこの実行時エラーが発生するようなのでテストランナー側の修正のみにとどめました。
-		# これは同様の回避策を実装へ適用してしまうと awaitable でない処理が即座に完了しなくなるためです。
-		#
-
-		#@warning_ignore(redundant_await)
+		# 待機しなくてはならないパターン #1
 		var a3 := Async.from(func(): await test.delay(0.2))
-		test.is_false(a3.is_completed, "awaitable であるコルーチンに対して待機が発生していない可能性があります")
+		test.is_false(a3.is_completed, "awaitable であるコルーチンに対して待機が発生している")
 		test.is_null(await a3.wait())
 		test.is_true(a3.is_completed)
 
-		#@warning_ignore(redundant_await)
+		# 待機しなくてはならないパターン #2
 		var a4 := Async.from(func(): await test.delay(0.2); return 1234)
-		test.is_false(a4.is_completed, "awaitable であるコルーチンに対して待機が発生していない可能性があります")
+		test.is_false(a4.is_completed, "awaitable であるコルーチンに対して待機が発生している")
 		test.expect(1234, await a4.wait())
 		test.is_true(a4.is_completed)
 
-		#@warning_ignore(redundant_await)
 		var a5 := Async.from(func(): await test.delay(0.2))
 		test.is_false(a5.is_completed, "awaitable であるコルーチンに対して待機が発生していない可能性があります")
 		test.is_null(await a5.wait(test.delay_cancel(0.1)))
 		test.is_true(a5.is_canceled)
 
-		#@warning_ignore(redundant_await)
 		var a6 := Async.from(func(): await test.delay(0.2); return 1234)
 		test.is_false(a6.is_completed, "awaitable であるコルーチンに対して待機が発生していない可能性があります")
 		test.is_null(await a6.wait(test.delay_cancel(0.1)))
@@ -219,6 +210,10 @@ func _ready():
 	)
 
 	case("Async.from_signal()", func(test):
+		#
+		# キャンセルなし
+		#
+
 		var a1 := Async.from_signal(test.signal_0)
 		test.is_false(a1.is_completed)
 		test.delay_emit_0(0.1)
@@ -254,6 +249,10 @@ func _ready():
 		test.delay_emit_5(0.1, 1234, "abcd", true, null, 0.5)
 		test.expect([1234, "abcd", true, null, 0.5], await a6.wait())
 		test.is_true(a6.is_completed)
+
+		#
+		# キャンセルあり
+		#
 
 		var a7 := Async.from_signal(test.signal_0)
 		test.is_false(a7.is_completed)
@@ -293,6 +292,10 @@ func _ready():
 	)
 
 	case("Async.from_signal_name()", func(test):
+		#
+		# キャンセルなし
+		#
+
 		var a1 := Async.from_signal_name(test, "signal_0")
 		test.is_false(a1.is_completed)
 		test.delay_emit_0(0.1)
@@ -328,6 +331,10 @@ func _ready():
 		test.delay_emit_5(0.1, 1234, "abcd", true, null, 0.5)
 		test.expect([1234, "abcd", true, null, 0.5], await a6.wait())
 		test.is_true(a6.is_completed)
+
+		#
+		# キャンセルあり
+		#
 
 		var a7 := Async.from_signal_name(test, "signal_0")
 		test.is_false(a7.is_completed)
@@ -387,13 +394,6 @@ func _ready():
 		test.is_false(a1.is_completed)
 		test.expect(0.2, await a1.wait())
 		t1.stop()
-
-		var t2 = test.timer(0.1)
-		var a2 := Async.delay_msec(200.0)
-		test.is_false(a2.is_completed)
-		test.is_null(await a2.wait(test.delay_cancel(0.1)))
-		test.is_true(a2.is_canceled)
-		t2.stop()
 	)
 
 	case("Async.delay_usec()", func(test):
@@ -402,343 +402,531 @@ func _ready():
 		test.is_false(a1.is_completed)
 		test.expect(0.2, await a1.wait())
 		t1.stop()
-
-		var t2 = test.timer(0.1)
-		var a2 := Async.delay_usec(200000.0)
-		test.is_false(a2.is_completed)
-		test.is_null(await a2.wait(test.delay_cancel(0.1)))
-		test.is_true(a2.is_canceled)
-		t2.stop()
 	)
 
 	case("Async.all()", func(test):
-		var t1 := Async.all([])
-		test.is_true(t1.is_completed)
-		test.expect([], await t1.wait())
+		var a1 := Async.all([])
+		test.is_true(a1.is_completed)
+		test.expect([], await a1.wait())
 
-		var t2 := Async.all([
-			Async.completed(0.125),
-			Async.completed(0.25),
-			Async.completed(0.5),
-		])
-		test.is_true(t2.is_completed)
-		test.expect([0.125, 0.25, 0.5], await t2.wait())
-
-		var t3 := Async.all([
-			Async.canceled(),
-			Async.canceled(),
-			Async.canceled(),
-		])
-		test.is_true(t3.is_canceled)
-		test.is_null(await t3.wait())
-
-		var t4 := Async.all([
-			Async.delay(0.125),
-			Async.delay(0.25),
-			Async.completed(0.5),
-		])
-		test.is_false(t4.is_completed)
-		test.expect([0.125, 0.25, 0.5], await t4.wait())
-
-		var t5 := Async.all([
-			Async.delay(0.125),
-			Async.delay(0.25),
+		var a2 := Async.all([
+			"aaaa",
+			true,
 			0.5,
 		])
-		test.is_false(t5.is_completed)
-		test.expect([0.125, 0.25, 0.5], await t5.wait())
+		test.is_true(a2.is_completed)
+		test.expect(["aaaa", true, 0.5], await a2.wait())
 
-		var t6 := Async.all([
-			0.125,
+		var a3 := Async.all([
+			Async.completed("aaaa"),
+			Async.completed(true),
+			Async.completed(0.5),
+		])
+		test.is_true(a3.is_completed)
+		test.expect(["aaaa", true, 0.5], await a3.wait())
+
+		var a4 := Async.all([
+			Async.completed("aaaa"),
+			true,
+			Async.completed(0.5),
+		])
+		test.is_true(a4.is_completed)
+		test.expect(["aaaa", true, 0.5], await a4.wait())
+
+		var a5 := Async.all([
+			Async.canceled(),
+			Async.canceled(),
+			Async.canceled(),
+		])
+		test.is_true(a5.is_canceled)
+		test.is_null(await a5.wait())
+
+		var a6 := Async.all([
+			Async.completed("aaaa"),
+			true,
+			Async.canceled(),
+		])
+		test.is_true(a6.is_canceled)
+		test.is_null(await a6.wait())
+
+		var c7 := Cancel.new()
+		c7.request()
+		var a7 := Async.all([
+			Async.delay(1.0),
+			Async.delay(1.0),
+			Async.delay(1.0),
+		], c7)
+		test.is_true(a7.is_canceled)
+		test.is_null(await a7.wait())
+
+		var a8 := Async.all([
+			Async.delay(0.125),
+			Async.delay(0.25),
+			Async.delay(0.5),
+		])
+		test.is_false(a8.is_completed)
+		test.expect([0.125, 0.25, 0.5], await a8.wait())
+
+		var a9 := Async.all([
+			Async.delay(0.125),
 			0.25,
-			0.5,
+			Async.completed(0.5),
 		])
-		test.is_true(t6.is_completed)
-		test.expect([0.125, 0.25, 0.5], await t6.wait())
+		test.is_false(a9.is_completed)
+		test.expect([0.125, 0.25, 0.5], await a9.wait())
 
-		var t7 := Async.all([
-			Async.delay(1.0),
-			2.0,
-			Async.completed(1.0),
-		], test.delay_cancel(0.5)) # ドレインを途中でキャンセル
-		test.is_false(t7.is_completed)
-		test.is_null(await t7.wait())
-		test.is_true(t7.is_canceled)
-
-		var t8 := Async.all([
+		var a10 := Async.all([
 			Async.delay(1.0),
 			2.0,
 			Async.completed(3.0),
-		])
-		test.is_false(t8.is_completed)
-		test.is_null(await t8.wait(test.delay_cancel(0.5))) # 待機を途中でキャンセル
-		test.is_true(t8.is_canceled)
+		], test.delay_cancel(0.5))
+		test.is_false(a10.is_completed)
+		test.is_null(await a10.wait())
+		test.is_true(a10.is_canceled)
 
-		var c9 = test.delay_cancel(0.5) # ドレインと待機を途中でキャンセル
-		var t9 := Async.all([
+		var a11 := Async.all([
 			Async.delay(1.0),
-			2.0,
-			Async.completed(3.0),
-		], c9)
-		test.is_false(t9.is_completed)
-		test.is_null(await t9.wait(c9))
-		test.is_true(t9.is_canceled)
-
-		var t10 := Async.all([
+			1.0,
 			Async.completed(1.0),
-			Async.completed(2.0),
+		])
+		test.is_false(a11.is_completed)
+		test.is_null(await a11.wait(test.delay_cancel(0.5)))
+		test.is_true(a11.is_canceled)
+
+		var c12 = test.delay_cancel(0.5)
+		var a12 := Async.all([
+			Async.delay(1.0),
+			1.0,
+			Async.completed(1.0),
+		], c12)
+		test.is_false(a12.is_completed)
+		test.is_null(await a12.wait(c12))
+		test.is_true(a12.is_canceled)
+
+		var a13 := Async.all([
+			Async.completed(1.0),
+			Async.completed(1.0),
 			Async.canceled(),
 		])
-		test.is_false(t10.is_completed)
-		test.is_true(t10.is_canceled)
+		test.is_false(a13.is_completed)
+		test.is_true(a13.is_canceled)
 	)
 
 	case("Async.all_settled()", func(test):
-		# 空
-		var t1 := Async.all_settled([])
-		test.is_true(t1.is_completed)
-		var t1_r = test.is_not_null(await t1.wait())
-		test.expect([], t1_r)
+		var a1 := Async.all_settled([])
+		test.is_true(a1.is_completed)
+		var a1_r = test.is_not_null(await a1.wait())
+		test.expect([], a1_r)
 
-		# すべてが値
-		var t2 := Async.all_settled([1.0, 2.0, 3.0])
-		test.is_true(t1.is_completed)
-		var t2_r = test.is_not_null(await t2.wait())
-		test.expect(1.0, await t2_r[0].wait())
-		test.expect(2.0, await t2_r[1].wait())
-		test.expect(3.0, await t2_r[2].wait())
-
-		# すべてが完了済みの Async
-		var t3 := Async.all_settled([
-			Async.completed(1.0),
-			Async.completed(2.0),
-			Async.completed(3.0),
+		var a2 := Async.all_settled([
+			"aaaa",
+			true,
+			0.5,
 		])
-		test.is_true(t3.is_completed)
-		var t3_r = test.is_not_null(await t3.wait())
-		test.expect(1.0, await t3_r[0].wait())
-		test.expect(2.0, await t3_r[1].wait())
-		test.expect(3.0, await t3_r[2].wait())
+		test.is_true(a2.is_completed)
+		var a2_r = test.is_not_null(await a2.wait())
+		test.expect("aaaa", await a2_r[0].wait())
+		test.expect(true, await a2_r[1].wait())
+		test.expect(0.5, await a2_r[2].wait())
 
-		# すべてが Async
-		var t4 := Async.all_settled([
+		var a3 := Async.all_settled([
+			Async.completed("aaaa"),
+			Async.completed(true),
+			Async.completed(0.5),
+		])
+		test.is_true(a3.is_completed)
+		var a3_r = test.is_not_null(await a3.wait())
+		test.expect("aaaa", await a3_r[0].wait())
+		test.expect(true, await a3_r[1].wait())
+		test.expect(0.5, await a3_r[2].wait())
+
+		var a4 := Async.all_settled([
+			Async.completed("aaaa"),
+			true,
+			Async.completed(0.5),
+		])
+		test.is_true(a4.is_completed)
+		var a4_r = test.is_not_null(await a4.wait())
+		test.expect("aaaa", await a4_r[0].wait())
+		test.expect(true, await a4_r[1].wait())
+		test.expect(0.5, await a4_r[2].wait())
+
+		var a5 := Async.all_settled([
+			Async.canceled(),
+			Async.canceled(),
+			Async.canceled(),
+		])
+		test.is_true(a5.is_completed)
+		var a5_r = test.is_not_null(await a5.wait())
+		test.is_true(a5_r[0].is_canceled)
+		test.is_true(a5_r[0].is_canceled)
+		test.is_true(a5_r[0].is_canceled)
+
+		var a6 := Async.all_settled([
+			Async.completed("aaaa"),
+			true,
+			Async.canceled(),
+		])
+		test.is_true(a6.is_completed)
+		var a6_r = test.is_not_null(await a6.wait())
+		test.expect("aaaa", await a6_r[0].wait())
+		test.expect(true, await a6_r[1].wait())
+		test.is_true(a6_r[2].is_canceled)
+
+		var c7 := Cancel.new()
+		c7.request()
+		var a7 := Async.all_settled([
 			Async.delay(1.0),
-			Async.completed(2.0),
-			Async.completed(3.0),
-		])
-		test.is_false(t4.is_completed)
-		var t4_r = test.is_not_null(await t4.wait())
-		test.expect(1.0, await t4_r[0].wait())
-		test.expect(2.0, await t4_r[1].wait())
-		test.expect(3.0, await t4_r[2].wait())
+			Async.delay(2.0),
+			Async.delay(3.0),
+		], c7)
+		test.is_true(a7.is_completed)
+		var a7_r = test.is_not_null(await a7.wait())
+		test.is_true(a7_r[0].is_canceled)
+		test.is_true(a7_r[1].is_canceled)
+		test.is_true(a7_r[2].is_canceled)
 
-		# すべてが完了済みの Async と値
-		var t5 := Async.all_settled([
-			Async.completed(1.0),
-			2.0,
-			Async.completed(3.0),
+		var a8 := Async.all_settled([
+			Async.delay(0.125),
+			Async.delay(0.25),
+			Async.delay(0.5),
 		])
-		test.is_true(t5.is_completed)
-		var t5_r = test.is_not_null(await t5.wait())
-		test.expect(1.0, await t5_r[0].wait())
-		test.expect(2.0, await t5_r[1].wait())
-		test.expect(3.0, await t5_r[2].wait())
+		test.is_false(a8.is_completed)
+		var a8_r = test.is_not_null(await a8.wait())
+		test.expect(0.125, await a8_r[0].wait())
+		test.expect(0.25, await a8_r[1].wait())
+		test.expect(0.5, await a8_r[2].wait())
 
-		# すべてが Async と値
-		var t6 := Async.all_settled([
-			Async.delay(1.0),
-			2.0,
-			Async.completed(3.0),
+		var a9 := Async.all_settled([
+			Async.delay(0.125),
+			0.25,
+			Async.completed(0.5),
 		])
-		test.is_false(t6.is_completed)
-		var t6_r = test.is_not_null(await t6.wait())
-		test.expect(1.0, await t6_r[0].wait())
-		test.expect(2.0, await t6_r[1].wait())
-		test.expect(3.0, await t6_r[2].wait())
+		test.is_false(a9.is_completed)
+		var a9_r = test.is_not_null(await a9.wait())
+		test.expect(0.125, await a9_r[0].wait())
+		test.expect(0.25, await a9_r[1].wait())
+		test.expect(0.5, await a9_r[2].wait())
 
-		# ドレインを途中でキャンセル
-		var t7 := Async.all_settled([
+		var a10 := Async.all_settled([
 			Async.delay(1.0),
 			2.0,
 			Async.completed(3.0),
 		], test.delay_cancel(0.5))
-		test.is_false(t7.is_completed)
-		var t7_r = test.is_not_null(await t7.wait())
-		test.is_null(await t7_r[0].wait())
-		test.expect(2.0, await t7_r[1].wait())
-		test.expect(3.0, await t7_r[2].wait())
+		test.is_false(a10.is_completed)
+		var a10_r = test.is_not_null(await a10.wait())
+		test.is_true(a10_r[0].is_canceled)
+		test.is_true(a10_r[1].is_completed)
+		test.is_true(a10_r[2].is_completed)
 
-		# 待機を途中でキャンセル
-		var t8 := Async.all_settled([
+		var a11 := Async.all_settled([
 			Async.delay(1.0),
-			2.0,
-			Async.completed(3.0),
-		])
-		test.is_false(t8.is_completed)
-		test.is_null(await t8.wait(test.delay_cancel(0.5)))
-		test.is_true(t8.is_canceled)
-
-		# ドレインと待機を途中でキャンセル
-		var c9 = test.delay_cancel(0.5)
-		var t9 := Async.all_settled([
-			Async.delay(1.0),
-			2.0,
-			Async.completed(3.0),
-		], c9)
-		# 同一キャンセルを使った場合、ドレイン wait() を優先したいため以下であってる
-		# ドレインキャンセル後 t9.wait() 待機側へシグナルし再開している
-		test.is_false(t9.is_completed)
-		var t9_r = test.is_not_null(await t9.wait())
-		test.is_null(await t9_r[0].wait())
-		test.expect(2.0, await t9_r[1].wait())
-		test.expect(3.0, await t9_r[2].wait())
-		test.is_true(t9.is_completed)
-
-		# キャンセルされた Async を含む
-		var t10 := Async.all_settled([
+			1.0,
 			Async.completed(1.0),
-			Async.completed(2.0),
-			Async.canceled(),
 		])
-		test.is_true(t10.is_completed)
-		test.is_false(t10.is_canceled)
-		var t10_r = test.is_not_null(await t10.wait())
-		test.expect(1.0, await t10_r[0].wait())
-		test.expect(2.0, await t10_r[1].wait())
-		test.is_null(await t10_r[2].wait())
-		test.is_true(t9.is_completed)
+		test.is_false(a11.is_completed)
+		test.is_null(await a11.wait(test.delay_cancel(0.5)))
+		test.is_true(a11.is_canceled)
+
+		var c12 = test.delay_cancel(0.5)
+		var a12 := Async.all_settled([
+			Async.delay(1.0),
+			1.0,
+			Async.completed(1.0),
+		], c12)
+		test.is_false(a12.is_completed)
+		var a12_r = test.is_not_null(await a12.wait(c12))
+		test.is_true(a12_r[0].is_canceled)
+		test.expect(1.0, await a12_r[1].wait())
+		test.expect(1.0, await a12_r[2].wait())
 	)
 
 	case("Async.any()", func(test):
-		var t1 := Async.any([])
-		test.is_true(t1.is_canceled)
-		test.is_null(await t1.wait())
+		var a1 := Async.any([])
+		test.is_true(a1.is_canceled)
+		test.is_null(await a1.wait())
 
-		var t2 := Async.any([1.0, 2.0, 3.0])
-		test.is_true(t2.is_completed)
-		test.expect(1.0, await t2.wait())
-
-		var t3 := Async.any([
-			Async.completed(1.0),
-			Async.completed(2.0),
-			Async.completed(3.0),
+		var a2 := Async.any([
+			"aaaa",
+			true,
+			0.5,
 		])
-		test.is_true(t3.is_completed)
-		test.expect(1.0, await t3.wait())
+		test.is_true(a2.is_completed)
+		test.expect("aaaa", await a2.wait())
 
-		var t4 := Async.any([
-			Async.delay(1.0),
-			Async.completed(2.0),
-			3.0,
+		var a3 := Async.any([
+			Async.completed("aaaa"),
+			Async.completed(true),
+			Async.completed(0.5),
 		])
-		test.is_true(t4.is_completed)
-		test.expect(2.0, await t4.wait())
+		test.is_true(a3.is_completed)
+		test.expect("aaaa", await a3.wait())
 
-		var t5 := Async.any([
-			Async.delay(1.0),
-			Async.delay(2.0),
-			Async.delay(3.0),
+		var a4 := Async.any([
+			Async.completed("aaaa"),
+			true,
+			Async.completed(0.5),
 		])
-		test.is_false(t5.is_completed)
-		test.expect(1.0, await t5.wait())
+		test.is_true(a4.is_completed)
+		test.expect("aaaa", await a4.wait())
 
-		var t6 := Async.any([
+		var a5 := Async.any([
 			Async.canceled(),
-			Async.delay(2.0),
-			Async.delay(3.0),
+			Async.canceled(),
+			Async.canceled(),
 		])
-		test.is_false(t6.is_completed)
-		test.expect(2.0, await t6.wait())
+		test.is_true(a5.is_canceled)
+		test.is_null(await a5.wait())
 
-		var t7 := Async.any([
+		var a6 := Async.any([
+			Async.completed("aaaa"),
+			true,
+			Async.canceled(),
+		])
+		test.is_true(a6.is_completed)
+		test.expect("aaaa", await a6.wait())
+
+		var a7 := Async.any([
 			Async.delay(1.0),
 			Async.delay(1.0),
 			Async.delay(1.0),
 		], test.delay_cancel(0.5))
-		test.is_false(t7.is_completed)
-		test.is_null(await t7.wait())
+		test.is_false(a7.is_completed)
+		test.is_null(await a7.wait())
 
-		var t8 := Async.any([
+		var a8 := Async.any([
+			Async.delay(0.125),
+			Async.delay(0.25),
+			Async.delay(0.5),
+		])
+		test.is_false(a8.is_completed)
+		test.expect(0.125, await a8.wait())
+
+		var a9 := Async.any([
+			Async.delay(0.125),
+			0.25,
+			Async.completed(0.5),
+		])
+		test.is_true(a9.is_completed)
+		test.expect(0.25, await a9.wait())
+
+		var a10 := Async.any([
 			Async.delay(1.0),
 			2.0,
 			Async.completed(3.0),
+		], test.delay_cancel(0.5))
+		test.is_true(a10.is_completed)
+		test.expect(2.0, await a10.wait())
+
+		var a11 := Async.any([
+			Async.delay(1.0),
+			1.0,
+			Async.completed(1.0),
 		])
-		test.is_false(t8.is_completed)
-		test.is_null(await t8.wait(test.delay_cancel(0.5)))
-		test.is_true(t8.is_canceled)
-#
-#		# ドレインと待機を途中でキャンセル
-#		var c9 = test.delay_cancel(0.5)
-#		var t9 := Async.all_settled([
-#			Async.delay(1.0),
-#			2.0,
-#			Async.completed(3.0),
-#		], c9)
-#		# 同一キャンセルを使った場合、ドレイン wait() を優先したいため以下であってる
-#		# ドレインキャンセル後 t9.wait() 待機側へシグナルし再開している
-#		test.is_false(t9.is_completed)
-#		var t9_r = test.is_not_null(await t9.wait())
-#		test.is_null(await t9_r[0].wait())
-#		test.expect(2.0, await t9_r[1].wait())
-#		test.expect(3.0, await t9_r[2].wait())
-#		test.is_true(t9.is_completed)
-#
-#		# キャンセルされた Async を含む
-#		var t10 := Async.all_settled([
-#			Async.completed(1.0),
-#			Async.completed(2.0),
-#			Async.canceled(),
-#		])
-#		test.is_true(t10.is_completed)
-#		test.is_false(t10.is_canceled)
-#		var t10_r = test.is_not_null(await t10.wait())
-#		test.expect(1.0, await t10_r[0].wait())
-#		test.expect(2.0, await t10_r[1].wait())
-#		test.is_null(await t10_r[2].wait())
-#		test.is_true(t9.is_completed)
+		test.is_true(a11.is_completed)
+		test.expect(1.0, await a11.wait(test.delay_cancel(0.5)))
+
+		var c12 = test.delay_cancel(0.5)
+		var a12 := Async.any([
+			Async.delay(1.0),
+			1.0,
+			Async.completed(1.0),
+		], c12)
+		test.is_true(a12.is_completed)
+		test.expect(1.0, await a12.wait(c12))
+
+		var a13 := Async.any([
+			Async.completed(1.0),
+			Async.completed(1.0),
+			Async.canceled(),
+		])
+		test.is_true(a13.is_completed)
+		test.expect(1.0, await a13.wait())
 	)
 
+	case("Async.race()", func(test):
+#		var a1 := Async.race([])
+#		test.is_true(a1.is_completed)
+#		test.is_null(await a1.wait())
 
-#class Test:
-#	func run(f: Callable):
-#		# おまじない
-#		var thunk := func():
-#			@warning_ignore(redundant_await)
-#			await f.call(_assert)
-#			if 0 < len(_fail_indices):
-#				printerr(_name)
-#			else:
-#				print(_name)
-#			print("  pass %d" % _pass)
-#			if 0 < len(_fail_indices):
-#				print("  fail %d <<< %s" % [len(_fail_indices), str(_fail_indices)])
-#			unreference()
-#		reference()
-#		thunk.call()
-#
-#	var _name: String
-#	var _pass: int = 0
-#	var _next: int = 0
-#	var _fail_indices := []
-#
-#	func _init(name):
-#		_name = name
-#
-#	func _assert(b: bool, k = null):
-#		if b:
-#			_pass += 1
-#		elif k is String:
-#			_fail_indices.append(k)
-#		else:
-#			_fail_indices.append(_next)
-#		_next += 1
-#
+		var a2 := Async.race([
+			"aaaa",
+			true,
+			0.5,
+		])
+		test.is_true(a2.is_completed)
+		var a2_r = test.is_not_null(await a2.wait())
+		test.expect("aaaa", await a2_r.wait())
 
+		var a3 := Async.race([
+			Async.completed("aaaa"),
+			Async.completed(true),
+			Async.completed(0.5),
+		])
+		test.is_true(a3.is_completed)
+		var a3_r = test.is_not_null(await a3.wait())
+		test.expect("aaaa", await a3_r.wait())
 
-#	Test.new("Async.any()").run(func(t):
-#		return
-#	)
-#
-#	Test.new("Async.race()").run(func(t):
-#		return
-#	)
+		var a4 := Async.race([
+			Async.completed("aaaa"),
+			true,
+			Async.completed(0.5),
+		])
+		test.is_true(a4.is_completed)
+		var a4_r = test.is_not_null(await a4.wait())
+		test.expect("aaaa", await a4_r.wait())
+
+		var a5 := Async.race([
+			Async.canceled(),
+			Async.canceled(),
+			Async.canceled(),
+		])
+		test.is_true(a5.is_canceled)
+		test.is_null(await a5.wait())
+
+		var a6 := Async.race([
+			Async.completed("aaaa"),
+			true,
+			Async.canceled(),
+		])
+		test.is_true(a6.is_completed)
+		var a6_r = test.is_not_null(await a6.wait())
+		test.expect("aaaa", await a6_r.wait())
+
+		var c7 := Cancel.new()
+		c7.request()
+		var a7 := Async.race([
+			Async.delay(1.0),
+			Async.delay(2.0),
+			Async.delay(3.0),
+		], c7)
+		test.is_true(a7.is_canceled)
+		test.is_null(await a7.wait())
+
+		var a8 := Async.race([
+			Async.delay(0.125),
+			Async.delay(0.25),
+			Async.delay(0.5),
+		])
+		test.is_false(a8.is_completed)
+		var a8_r = test.is_not_null(await a8.wait())
+		test.expect(0.125, await a8_r.wait())
+
+		var a9 := Async.race([
+			Async.delay(0.125),
+			0.25,
+			Async.completed(0.5),
+		])
+		test.is_true(a9.is_completed)
+		var a9_r = test.is_not_null(await a9.wait())
+		test.expect(0.25, await a9_r.wait())
+
+		var a10 := Async.race([
+			Async.delay(1.0),
+			2.0,
+			Async.completed(3.0),
+		], test.delay_cancel(0.5))
+		test.is_true(a10.is_completed)
+		var a10_r = test.is_not_null(await a10.wait())
+		test.expect(2.0, await a10_r.wait())
+
+		var a11 := Async.race([
+			Async.delay(1.0),
+			1.0,
+			Async.completed(1.0),
+		])
+		test.is_true(a11.is_completed)
+		var a11_r = test.is_not_null(await a11.wait(test.delay_cancel(0.5)))
+		test.expect(1.0, await a11_r.wait())
+
+		var c12 = test.delay_cancel(0.5)
+		var a12 := Async.race([
+			Async.delay(1.0),
+			1.0,
+			Async.completed(1.0),
+		], c12)
+		test.is_true(a12.is_completed)
+		var a12_r = test.is_not_null(await a12.wait(c12))
+		test.expect(1.0, await a12_r.wait())
+	)
+
+	case("Async.then()", func(test):
+		var a1 := Async.completed(10).then(func(result): return result * result)
+		test.is_true(a1.is_completed)
+		test.expect(100, await a1.wait())
+
+		var a2 := Async.canceled().then(func(result): return result * result)
+		test.is_true(a2.is_canceled)
+		test.is_null(await a2.wait())
+
+		var a3 := Async.delay(0.125).then(func(result): return result * 2.0)
+		test.is_false(a3.is_completed)
+		test.expect(0.25, await a3.wait())
+
+		var a4 := Async.completed(10).then(func(result):
+			await Async.wait_delay(0.125)
+			return result * result
+		)
+		test.is_false(a4.is_completed)
+		test.expect(100, await a4.wait())
+
+		var a5 := Async.delay(0.25).then(func(result): return result * 2.0, test.delay_cancel(0.125))
+		test.is_false(a5.is_completed)
+		test.is_false(a5.is_canceled)
+		test.is_null(await a5.wait())
+		test.is_true(a5.is_canceled)
+
+		var a6 := Async.delay(0.25).then(func(result): return result * 2.0)
+		test.is_false(a6.is_completed)
+		test.is_false(a6.is_canceled)
+		test.is_null(await a6.wait(test.delay_cancel(0.125)))
+		test.is_true(a6.is_canceled)
+
+		var c7 = test.delay_cancel(0.125)
+		var a7 := Async.delay(0.25).then(func(result): return result * 2.0, c7)
+		test.is_false(a7.is_completed)
+		test.is_false(a7.is_canceled)
+		test.is_null(await a7.wait(c7))
+		test.is_true(a7.is_canceled)
+
+		var c8 := Cancel.new()
+		c8.request()
+		var a8 := Async.delay(0.25).then(func(result): return result * 2.0, c8)
+		test.is_false(a8.is_completed)
+		test.is_true(a8.is_canceled)
+		test.is_null(await a8.wait(c8))
+	)
+
+	case("Async.unwrap()", func(test):
+		var a1 := Async.completed(10).unwrap()
+		test.is_true(a1.is_completed)
+		test.expect(10, await a1.wait())
+
+		var a2 := Async.completed(Async.completed(10)).unwrap()
+		test.is_true(a2.is_completed)
+		test.expect(10, await a2.wait())
+
+		var a3 := Async.completed(Async.completed(Async.completed(10))).unwrap(2)
+		test.is_true(a3.is_completed)
+		test.expect(10, await a3.wait())
+
+		var a4 := Async.canceled().unwrap()
+		test.is_true(a4.is_canceled)
+		test.is_null(await a4.wait())
+
+		var a5 := Async.completed(Async.delay(0.25)).unwrap()
+		test.is_false(a5.is_completed)
+		test.expect(0.25, await a5.wait())
+
+		var a6 := Async.completed(Async.delay(0.25)).unwrap(1, test.delay_cancel(0.125))
+		test.is_false(a6.is_completed)
+		test.is_false(a6.is_canceled)
+		test.is_null(await a6.wait())
+		test.is_true(a6.is_canceled)
+
+		var a7 := Async.completed(Async.completed(Async.delay(0.25))).unwrap(1, test.delay_cancel(0.125))
+		test.is_true(a7.is_completed)
+		var a7_r = test.is_not_null(await a7.wait())
+		test.is_false(a7_r.is_completed)
+		test.expect(0.25, await a7_r.wait())
+	)

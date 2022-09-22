@@ -9,7 +9,7 @@ func _init(
 	drain_cancel: Cancel) -> void:
 
 	assert(drains != null and 0 < len(drains))
-	assert(drain_cancel == null or not drain_cancel.is_requested)
+#	assert(drain_cancel == null or not drain_cancel.is_requested)
 
 	var drain_count := len(drains)
 	_drain_pending = drain_count
