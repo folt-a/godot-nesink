@@ -62,8 +62,9 @@ func wait(cancel: Cancel = null):
 
 	return await null
 
-# (内部用) この関数ではなく [member is_completed] もしくは [member is_canceled] を
-# 使うようにしてください。将来名前が変わる可能性があります。
+## [b](アドオン内もしくは実装内でのみ使用)[/b] この関数ではなく
+## [member is_completed] もしくは [member is_canceled] を使うようにしてください。
+## 将来名前が変わる可能性があります。
 func get_state() -> int:
 	#
 	# 継承先で実装する必要があります。

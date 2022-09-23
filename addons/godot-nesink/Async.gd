@@ -49,6 +49,10 @@ static func from(coroutine: Callable) -> Async:
 	assert(coroutine != null)
 	return NesinkronaFromAsync.new(coroutine)
 
+static func from_2(coroutine: Callable) -> Async:
+	assert(coroutine != null)
+	return NesinkronaFrom2Async.new(coroutine)
+
 ## シグナルを受信するとその引数配列を結果として完了する [Async] を作成します。[br]
 ## [br]
 ## [b]補足[/b][br]
@@ -366,6 +370,13 @@ func then(
 	assert(coroutine != null)
 	return NesinkronaThenAsync.new(self, cancel, coroutine)
 
+func then_2(
+	coroutine: Callable,
+	cancel: Cancel = null) -> Async:
+
+	assert(coroutine != null)
+	return NesinkronaThen2Async.new(self, cancel, coroutine)
+
 ## 結果が [Async] である場合、指定した回数アンラップを試みた新たな [Async] を作成します。[br]
 ## [br]
 ## [b]使い方[/b]
@@ -402,5 +413,4 @@ func unwrap(
 ##     [/codeblock]
 static func sequence(generator: Callable) -> AsyncSequence:
 	assert(generator != null)
-	return AsyncSequence.from(generator)
-
+	return NesinkronaAsyncSequence.new(generator)

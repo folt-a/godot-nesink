@@ -28,10 +28,7 @@ func _init_flight(
 				STATE_PENDING_WITH_WAITERS:
 					cancel_release()
 		STATE_COMPLETED:
-			var result = \
-				await coroutine.call() \
-				if drain_result == null else \
-				await coroutine.call(drain_result)
+			var result = await coroutine.call(drain_result)
 			match get_state():
 				STATE_PENDING:
 					complete(result)
