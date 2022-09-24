@@ -2,7 +2,7 @@ class_name NesinkronaAnyAsync extends NesinkronaAsyncBase
 
 #-------------------------------------------------------------------------------
 
-var _drain_pending: int
+var _pending_drains: int
 
 func _init(
 	drains: Array,
@@ -12,46 +12,38 @@ func _init(
 	assert(drain_cancel == null or not drain_cancel.is_requested)
 
 	var drain_count := len(drains)
-	_drain_pending = drain_count
+
+	#
+	# どれか一つのドレインが完了するまで待機します。
+	#
+	# どれか一つのドレインが完了した -> 結果を設定して完了する
+	# 他 -> キャンセル
+	#
+
+	_pending_drains = drain_count
 	for drain_index in drain_count:
-		_init_flight(
+		_init_gate(
 			drains[drain_index],
 			drain_cancel)
 
-func _init_flight(
+func _init_gate(
 	drain,
 	drain_cancel: Cancel) -> void:
 
-	reference()
-
-	var drain_result
-	var drain_state: int
 	if drain is NesinkronaAwaitable:
-		drain_result = await drain.wait(drain_cancel)
-		drain_state = drain.get_state()
+		reference()
+		var drain_result = await drain.wait(drain_cancel)
+		_pending_drains -= 1
+		match drain.get_state():
+			STATE_CANCELED:
+				if _pending_drains == 0:
+					cancel_release()
+			STATE_COMPLETED:
+				complete_release(drain_result)
+			_:
+				assert(false) # BUG
+		unreference()
+
 	else:
-		drain_result = drain
-		drain_state = STATE_COMPLETED
-
-	_drain_pending -= 1
-	match drain_state:
-		STATE_COMPLETED:
-			match get_state():
-				STATE_PENDING:
-					complete(drain_result)
-				STATE_PENDING_WITH_WAITERS:
-					complete_release(drain_result)
-		STATE_CANCELED:
-			if _drain_pending == 0:
-				match get_state():
-					STATE_PENDING:
-						cancel()
-					STATE_PENDING_WITH_WAITERS:
-						cancel_release()
-		_:
-			assert(false)
-
-	unreference()
-
-func _to_string() -> String:
-	return "<NesinkronaWhenAnyAsync#%d>" % get_instance_id()
+		_pending_drains -= 1
+		complete_release(drain)

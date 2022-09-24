@@ -369,13 +369,13 @@ func _on_async_then_pressed():
 	$AsyncThenCancel.disabled = true
 	$AsyncThen.disabled = false
 
-func _on_async_sequence_pressed():
-	$AsyncSequence.disabled = true
-	$AsyncSequenceNextStatus/_1.button_pressed = false
-	$AsyncSequenceNextStatus/_2.button_pressed = false
-	$AsyncSequenceNextStatus/_3.button_pressed = false
-	$AsyncSequenceNextStatus/_4.button_pressed = false
-	$AsyncSequenceNextStatus/Label.text = "Pending."
+func _on_async_iterator_pressed():
+	$AsyncIterator.disabled = true
+	$AsyncIteratorNextStatus/_1.button_pressed = false
+	$AsyncIteratorNextStatus/_2.button_pressed = false
+	$AsyncIteratorNextStatus/_3.button_pressed = false
+	$AsyncIteratorNextStatus/_4.button_pressed = false
+	$AsyncIteratorNextStatus/Label.text = "Pending."
 
 	$Background/Line1.set("theme_override_constants/outline_size", 2.0)
 	$Background/Line2.set("theme_override_constants/outline_size", 2.0)
@@ -387,35 +387,34 @@ func _on_async_sequence_pressed():
 	$Background/Line3.visible_ratio = 0.0
 	$Background/Line4.visible_ratio = 0.0
 
-	var seq := Async.sequence(func(yield_):
+	var seq := AsyncIterator.from(func(yield_):
 		await Async.delay(2.0).wait()
-		await yield_.call(1).wait()
+		yield_.call(1)
 		await Async.delay(2.0).wait()
-		await yield_.call(2).wait()
+		yield_.call(2)
 		await Async.delay(2.0).wait()
-		await yield_.call(3).wait()
+		yield_.call(3)
 		await Async.delay(2.0).wait()
-		await yield_.call(4).wait()
-	)
+		yield_.call(4))
 
 	var handle_pressed := func():
-		$AsyncSequenceNext.disabled = true
+		$AsyncIteratorNext.disabled = true
 		var next_async = seq.next()
 		var line = await next_async.wait()
 		get_node("Background/Line%d" % line).visible_ratio = 1.0
-		get_node("AsyncSequenceNextStatus/_%d" % line).button_pressed = true
-		$AsyncSequenceNext.disabled = false
+		get_node("AsyncIteratorNextStatus/_%d" % line).button_pressed = true
+		$AsyncIteratorNext.disabled = false
 
-	$AsyncSequenceNext.disabled = false
-	$AsyncSequenceNext.pressed.connect(handle_pressed)
+	$AsyncIteratorNext.disabled = false
+	$AsyncIteratorNext.pressed.connect(handle_pressed)
 
 	await seq.wait()
 
-	$AsyncSequenceNext.pressed.disconnect(handle_pressed)
-	$AsyncSequenceNext.disabled = true
-	$AsyncSequence.disabled = false
+	$AsyncIteratorNext.pressed.disconnect(handle_pressed)
+	$AsyncIteratorNext.disabled = true
+	$AsyncIterator.disabled = false
 
-	$AsyncSequenceNextStatus/Label.text = "Completed."
+	$AsyncIteratorNextStatus/Label.text = "Completed."
 	$Background/Line1.set("theme_override_constants/outline_size", 0.0)
 	$Background/Line2.set("theme_override_constants/outline_size", 0.0)
 	$Background/Line3.set("theme_override_constants/outline_size", 0.0)

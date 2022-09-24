@@ -2,59 +2,55 @@ class_name NesinkronaAllSettledAsync extends NesinkronaAsyncBase
 
 #-------------------------------------------------------------------------------
 
-var _drain_pending: int
+var _pending_drains: int
 
 func _init(
 	drains: Array,
 	drain_cancel: Cancel) -> void:
 
 	assert(drains != null and 0 < len(drains))
-	#assert(drain_cancel == null or not drain_cancel.is_requested)
 
-	var result := []
 	var drain_count := len(drains)
-	_drain_pending = drain_count
+	var result := []
 	result.resize(drain_count)
+
+	#
+	# すべてのドレインが待機中ではなくなるまで待機します。
+	#
+	# すべてのドレインが待機中ではなくなった -> 結果を含む Async の配列を設定して完了する
+	#
+
+	_pending_drains = drain_count
 	for drain_index in drain_count:
-		_init_flight(
+		_init_gate(
 			drains[drain_index],
 			drain_cancel,
 			drain_index,
 			result)
 
-func _init_flight(
+func _init_gate(
 	drain,
 	drain_cancel: Cancel,
 	drain_index: int,
 	result: Array) -> void:
 
-	reference()
-
-	var drain_result
 	if drain is NesinkronaAwaitable:
-		drain_result = await drain.wait(drain_cancel)
+		reference()
+		var drain_result = await drain.wait(drain_cancel)
 		match drain.get_state():
 			STATE_CANCELED:
-				drain_result = drain if drain is Async else \
-					NesinkronaCanon.create_canceled()
+				result[drain_index] = NesinkronaCanon.create_canceled_async()
 			STATE_COMPLETED:
-				drain_result = drain if drain is Async else \
-					NesinkronaCompletedAsync.new(drain_result)
+				result[drain_index] = NesinkronaCanon.create_completed_async(drain_result)
 			_:
 				assert(false) # BUG
+		_pending_drains -= 1
+		if _pending_drains == 0:
+			complete_release(result)
+		unreference()
+
 	else:
-		drain_result = NesinkronaCompletedAsync.new(drain)
-
-	result[drain_index] = drain_result
-	_drain_pending -= 1
-	if _drain_pending == 0:
-		match get_state():
-			STATE_PENDING:
-				complete(result)
-			STATE_PENDING_WITH_WAITERS:
-				complete_release(result)
-
-	unreference()
-
-func _to_string() -> String:
-	return "<NesinkronaWhenAllSettledAsync#%d>" % get_instance_id()
+		result[drain_index] = NesinkronaCanon.create_completed_async(drain)
+		_pending_drains -= 1
+		if _pending_drains == 0:
+			complete_release(result)

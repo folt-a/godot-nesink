@@ -9,7 +9,7 @@ class_name Cancel
 ## [br]
 ## このシグナルはアドオン外からの利用を想定していません。[br]
 ## デッドロックしてしまったり、[RefCounted] の寿命を跨いでしまったり、[br]
-## 安全ではないため [NesinkronaAwaitable] の実装内でのみ使用するようにしてください。[br]
+## 安全ではないため [Async] の実装内でのみ使用するようにしてください。[br]
 ## [br]
 ## Usage:
 ##     [codeblock]

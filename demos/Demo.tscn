@@ -488,7 +488,7 @@ width = 1.0
 default_color = Color(1, 1, 1, 0.12549)
 metadata/_edit_lock_ = true
 
-[node name="AsyncSequenceLabel" type="Label" parent="."]
+[node name="AsyncIteratorLabel" type="Label" parent="."]
 modulate = Color(1, 1, 1, 0.878431)
 layout_mode = 1
 offset_left = 32.0
@@ -497,20 +497,20 @@ offset_right = 768.0
 offset_bottom = 385.0
 theme_override_fonts/font = ExtResource("2_8nrwk")
 theme_override_font_sizes/font_size = 24
-text = "AsyncSequence:"
+text = "AsyncIterator/Generator:"
 vertical_alignment = 1
 metadata/_edit_lock_ = true
 
-[node name="AsyncSequence" type="Button" parent="."]
+[node name="AsyncIterator" type="Button" parent="."]
 layout_mode = 1
 offset_left = 96.0
 offset_top = 384.0
 offset_right = 312.0
 offset_bottom = 415.0
-text = "Async.sequence()"
+text = "AsyncIterator.from()"
 metadata/_edit_lock_ = true
 
-[node name="AsyncSequenceNext" type="Button" parent="."]
+[node name="AsyncIteratorNext" type="Button" parent="."]
 layout_mode = 1
 offset_left = 320.0
 offset_top = 384.0
@@ -521,7 +521,7 @@ disabled = true
 text = "Next"
 metadata/_edit_lock_ = true
 
-[node name="AsyncSequenceNextStatus" type="Panel" parent="."]
+[node name="AsyncIteratorNextStatus" type="Panel" parent="."]
 layout_mode = 1
 offset_left = 416.0
 offset_top = 384.0
@@ -529,7 +529,7 @@ offset_right = 800.0
 offset_bottom = 416.0
 metadata/_edit_lock_ = true
 
-[node name="_1" type="CheckBox" parent="AsyncSequenceNextStatus"]
+[node name="_1" type="CheckBox" parent="AsyncIteratorNextStatus"]
 layout_mode = 1
 offset_right = 64.0
 offset_bottom = 32.0
@@ -538,7 +538,7 @@ disabled = true
 text = "#1"
 metadata/_edit_lock_ = true
 
-[node name="_2" type="CheckBox" parent="AsyncSequenceNextStatus"]
+[node name="_2" type="CheckBox" parent="AsyncIteratorNextStatus"]
 layout_mode = 1
 offset_left = 64.0
 offset_right = 128.0
@@ -548,7 +548,7 @@ disabled = true
 text = "#2"
 metadata/_edit_lock_ = true
 
-[node name="_3" type="CheckBox" parent="AsyncSequenceNextStatus"]
+[node name="_3" type="CheckBox" parent="AsyncIteratorNextStatus"]
 layout_mode = 1
 offset_left = 128.0
 offset_right = 192.0
@@ -558,7 +558,7 @@ disabled = true
 text = "#3"
 metadata/_edit_lock_ = true
 
-[node name="_4" type="CheckBox" parent="AsyncSequenceNextStatus"]
+[node name="_4" type="CheckBox" parent="AsyncIteratorNextStatus"]
 layout_mode = 1
 offset_left = 192.0
 offset_right = 256.0
@@ -568,7 +568,7 @@ disabled = true
 text = "#4"
 metadata/_edit_lock_ = true
 
-[node name="Label" type="Label" parent="AsyncSequenceNextStatus"]
+[node name="Label" type="Label" parent="AsyncIteratorNextStatus"]
 layout_mode = 1
 offset_left = 256.0
 offset_right = 384.0
@@ -600,4 +600,4 @@ metadata/_edit_lock_ = true
 [connection signal="pressed" from="AsyncAny" to="." method="_on_async_any_pressed"]
 [connection signal="pressed" from="AsyncRace" to="." method="_on_async_race_pressed"]
 [connection signal="pressed" from="AsyncThen" to="." method="_on_async_then_pressed"]
-[connection signal="pressed" from="AsyncSequence" to="." method="_on_async_sequence_pressed"]
+[connection signal="pressed" from="AsyncIterator" to="." method="_on_async_iterator_pressed"]

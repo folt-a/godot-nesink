@@ -2,64 +2,45 @@ class_name NesinkronaRaceAsync extends NesinkronaAsyncBase
 
 #-------------------------------------------------------------------------------
 
-var _drain_pending: int
+var _pending_drains: int
 
 func _init(
 	drains: Array,
 	drain_cancel: Cancel) -> void:
 
 	assert(drains != null and 0 < len(drains))
-#	assert(drain_cancel == null or not drain_cancel.is_requested)
 
 	var drain_count := len(drains)
-	_drain_pending = drain_count
+
+	#
+	# どれか一つのドレインの待機中ではなくなるまで待機します。
+	#
+	# どれか一つのドレインが待機中ではなくなった -> 結果を Async として設定して完了する
+	#
+
+	_pending_drains = drain_count
 	for drain_index in drain_count:
-		_init_flight(
+		_init_gate(
 			drains[drain_index],
 			drain_cancel)
 
-func _init_flight(
+func _init_gate(
 	drain,
 	drain_cancel: Cancel) -> void:
 
-	reference()
-
-	var drain_result
-	var drain_state: int
 	if drain is NesinkronaAwaitable:
-		drain_result = await drain.wait(drain_cancel)
-		drain_state = drain.get_state()
-		match drain_state:
+		reference()
+		var drain_result = await drain.wait(drain_cancel)
+		_pending_drains -= 1
+		match drain.get_state():
 			STATE_CANCELED:
-				drain_result = drain if drain is Async else \
-					NesinkronaCanon.create_canceled_async()
+				if _pending_drains == 0:
+					complete_release(NesinkronaCanon.create_canceled_async())
 			STATE_COMPLETED:
-				drain_result = drain if drain is Async else \
-					NesinkronaCanon.create_completed_async(drain_result)
+				complete_release(NesinkronaCanon.create_completed_async(drain_result))
 			_:
 				assert(false) # BUG
+		unreference()
+
 	else:
-		drain_result = NesinkronaCompletedAsync.new(drain)
-		drain_state = STATE_COMPLETED
-
-	_drain_pending -= 1
-	match drain_state:
-		STATE_COMPLETED:
-			match get_state():
-				STATE_PENDING:
-					complete(drain_result)
-				STATE_PENDING_WITH_WAITERS:
-					complete_release(drain_result)
-		STATE_CANCELED:
-			if _drain_pending == 0:
-				drain_result = NesinkronaCanon.create_canceled_async()
-				match get_state():
-					STATE_PENDING:
-						complete(drain_result)
-					STATE_PENDING_WITH_WAITERS:
-						complete_release(drain_result)
-
-	unreference()
-
-func _to_string() -> String:
-	return "<NesinkronaWhenAnyAsync#%d>" % get_instance_id()
+		complete_release(NesinkronaCanon.create_completed_async(drain))

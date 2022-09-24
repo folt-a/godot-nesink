@@ -9,11 +9,8 @@ func create_timer(timeout: float) -> SceneTreeTimer:
 
 func create_completed_async(result = null) -> Async:
 	return \
-		_completed_async \
-		if result == null else \
+		_completed_async if result == null else \
 		NesinkronaCompletedAsync.new(result)
-		
-	return _completed_async
 
 func create_canceled_async() -> Async:
 	return _canceled_async

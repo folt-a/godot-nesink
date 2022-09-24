@@ -14,10 +14,15 @@ _global_script_classes=[{
 "language": &"GDScript",
 "path": "res://addons/godot-nesink/Async.gd"
 }, {
-"base": "Async",
-"class": &"AsyncSequence",
+"base": "NesinkronaAwaitable",
+"class": &"AsyncGenerator",
 "language": &"GDScript",
-"path": "res://addons/godot-nesink/AsyncSequence.gd"
+"path": "res://addons/godot-nesink/AsyncGenerator.gd"
+}, {
+"base": "NesinkronaAwaitable",
+"class": &"AsyncIterator",
+"language": &"GDScript",
+"path": "res://addons/godot-nesink/AsyncIterator.gd"
 }, {
 "base": "RefCounted",
 "class": &"Cancel",
@@ -44,10 +49,15 @@ _global_script_classes=[{
 "language": &"GDScript",
 "path": "res://addons/godot-nesink/NesinkronaAsyncBase.gd"
 }, {
-"base": "AsyncSequence",
-"class": &"NesinkronaAsyncSequence",
+"base": "AsyncGenerator",
+"class": &"NesinkronaAsyncGenerator",
 "language": &"GDScript",
-"path": "res://addons/godot-nesink/NesinkronaAsyncSequence.gd"
+"path": "res://addons/godot-nesink/NesinkronaAsyncGenerator.gd"
+}, {
+"base": "AsyncIterator",
+"class": &"NesinkronaAsyncIterator",
+"language": &"GDScript",
+"path": "res://addons/godot-nesink/NesinkronaAsyncIterator.gd"
 }, {
 "base": "RefCounted",
 "class": &"NesinkronaAwaitable",
@@ -70,14 +80,14 @@ _global_script_classes=[{
 "path": "res://addons/godot-nesink/NesinkronaDelayAsync.gd"
 }, {
 "base": "NesinkronaAsyncBase",
-"class": &"NesinkronaFrom2Async",
-"language": &"GDScript",
-"path": "res://addons/godot-nesink/NesinkronaFrom2Async.gd"
-}, {
-"base": "NesinkronaAsyncBase",
 "class": &"NesinkronaFromAsync",
 "language": &"GDScript",
 "path": "res://addons/godot-nesink/NesinkronaFromAsync.gd"
+}, {
+"base": "NesinkronaAsyncBase",
+"class": &"NesinkronaFromCallbackAsync",
+"language": &"GDScript",
+"path": "res://addons/godot-nesink/NesinkronaFromCallbackAsync.gd"
 }, {
 "base": "NesinkronaAsyncBase",
 "class": &"NesinkronaFromSignalAsync",
@@ -95,14 +105,14 @@ _global_script_classes=[{
 "path": "res://addons/godot-nesink/NesinkronaRaceAsync.gd"
 }, {
 "base": "NesinkronaAsyncBase",
-"class": &"NesinkronaThen2Async",
-"language": &"GDScript",
-"path": "res://addons/godot-nesink/NesinkronaThen2Async.gd"
-}, {
-"base": "NesinkronaAsyncBase",
 "class": &"NesinkronaThenAsync",
 "language": &"GDScript",
 "path": "res://addons/godot-nesink/NesinkronaThenAsync.gd"
+}, {
+"base": "NesinkronaAsyncBase",
+"class": &"NesinkronaThenCallbackAsync",
+"language": &"GDScript",
+"path": "res://addons/godot-nesink/NesinkronaThenCallbackAsync.gd"
 }, {
 "base": "NesinkronaAsyncBase",
 "class": &"NesinkronaUnwrapAsync",
@@ -121,24 +131,26 @@ _global_script_classes=[{
 }]
 _global_script_class_icons={
 "Async": "",
-"AsyncSequence": "",
+"AsyncGenerator": "",
+"AsyncIterator": "",
 "Cancel": "",
 "NesinkronaAllAsync": "",
 "NesinkronaAllSettledAsync": "",
 "NesinkronaAnyAsync": "",
 "NesinkronaAsyncBase": "",
-"NesinkronaAsyncSequence": "",
+"NesinkronaAsyncGenerator": "",
+"NesinkronaAsyncIterator": "",
 "NesinkronaAwaitable": "",
 "NesinkronaCanceledAsync": "",
 "NesinkronaCompletedAsync": "",
 "NesinkronaDelayAsync": "",
-"NesinkronaFrom2Async": "",
 "NesinkronaFromAsync": "",
+"NesinkronaFromCallbackAsync": "",
 "NesinkronaFromSignalAsync": "",
 "NesinkronaFromSignalNameAsync": "",
 "NesinkronaRaceAsync": "",
-"NesinkronaThen2Async": "",
 "NesinkronaThenAsync": "",
+"NesinkronaThenCallbackAsync": "",
 "NesinkronaUnwrapAsync": "",
 "TestCase": "",
 "TestTimer": ""
@@ -148,7 +160,7 @@ _global_script_class_icons={
 
 config/name="godot-nesink"
 config/description="Pseudo (task based) asynchronous patterns for Godot 4."
-run/main_scene="res://demos/Demo.tscn"
+run/main_scene="res://tests/Test_AsyncIterator.tscn"
 config/features=PackedStringArray("4.0", "Vulkan Mobile")
 config/icon="res://icon.svg"
 
