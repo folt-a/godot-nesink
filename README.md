@@ -23,6 +23,24 @@
 
 <br />
 
+### Async Helper からのおおまかな変更点
+
+- `Task` -> `Async` に変更
+- `TaskUnit` -> `Async` に変更
+- `when_*()` メソッドは状態を含めた 2 種類に分割
+  * `Task.when_all()` -> `Async.all()` (すべて完了) / `Async.all_settled()` (すべて完了もしくはキャンセル)
+  * `Task.when_any()` -> `Async.any()` (どれか完了) / `Async.race()` (どれか完了もしくはキャンセル)
+- `CancellationTokenSource` -> `Cancel` (トークンに分離せず共有する形にした)
+- インライン関数が書けるようになったので関連するメソッドを追加
+  * 継続メソッドを追加 `async.then()`
+  * 自己キャンセルできるようにした `Async.from_callback()` / `async.then_callback()`
+- 待機のタイミングを `async.wait()` にまとめた
+- ネストされた単位をアンラップするメソッドを追加 `async.unwrap()`
+- yield でやってたステップイテレーション -> `AsyncGenerator` 型、`AsyncIterator` 型で再現 (`AsyncGenerator.from()` / `AsyncIterator.from()`)
+- ドキュメントコメントつけた
+
+JS の Promise や Iterator, Generator に近くなってます。
+
 ---
 
 <br />
