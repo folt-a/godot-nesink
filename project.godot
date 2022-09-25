@@ -160,7 +160,7 @@ _global_script_class_icons={
 
 config/name="godot-nesink"
 config/description="Pseudo (task based) asynchronous patterns for Godot 4."
-run/main_scene="res://tests/Test_AsyncIterator.tscn"
+run/main_scene="res://demos/Demo.tscn"
 config/features=PackedStringArray("4.0", "Vulkan Mobile")
 config/icon="res://icon.svg"
 

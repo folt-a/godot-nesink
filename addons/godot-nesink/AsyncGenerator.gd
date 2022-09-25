@@ -53,14 +53,16 @@ static func from(coroutine: Callable) -> AsyncGenerator:
 #-------------------------------------------------------------------------------
 
 func _to_string() -> String:
-	var str := "<AsyncGenerator#%d>" % get_instance_id()
+	var str: String
 	match get_state():
 		STATE_PENDING:
-			str += "(pending)"
+			str = "(pending)" + str
 		STATE_PENDING_WITH_WAITERS:
-			str += "(pending_with_waiters)"
+			str = "(pending_with_waiters)" + str
 		STATE_CANCELED:
-			str += "(canceled)"
+			str = "(canceled)" + str
 		STATE_COMPLETED:
-			str += "(completed)"
-	return str
+			str = "(completed)" + str
+		_:
+			assert(false)
+	return str + "<AsyncGenerator#%d>" % get_instance_id()
