@@ -75,6 +75,7 @@ $Button.text = "Hi!"
 #### 状態
 
 Async クラスは `is_completed` プロパティ、`is_canceled` プロパティ、`is_pending` という 3 つのプロパティを持ち、そのプロパティが true を返すかにより 3 つの状態を表現します。
+ほとんどのケースでは、明示的に `Cancel` を使いキャンセルしない限り `is_canceled` が true になることはないです。(`Async.all()` や `Async.any()` で結果を生成できない場合はキャンセルされることがあります)
 
 ```mermaid
 graph LR
