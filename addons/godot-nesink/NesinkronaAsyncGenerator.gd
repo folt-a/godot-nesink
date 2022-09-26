@@ -33,6 +33,8 @@ func next(value = null) -> Async:
 
 #-------------------------------------------------------------------------------
 
+signal _init_sync
+
 var _runner: Async
 var _set_result_queue: Array[Callable] = []
 var _set_value_queue: Array[Callable] = []
@@ -54,7 +56,11 @@ func _yield(result = null) -> Async:
 	if len(_set_result_queue) != 0:
 		var set_result: Callable = _set_result_queue.pop_front()
 		yield_async = set_result.call(result)
-	elif _runner.is_pending:
+
+	# https://github.com/ydipeepo/godot-nesink/issues/3
+	# コンストラクタが完走する前にここへ到達する可能性があるため、
+	# _runner == null の条件を追加した。
+	elif _runner == null or _runner.is_pending:
 		yield_async = Async.from_callback(func(set: Callable, cancel: Callable) -> void:
 			var set_value := func(value, ran := false) -> Async:
 				var next_async: Async
