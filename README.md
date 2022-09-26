@@ -13,10 +13,12 @@
 
 # Nesinkrona (β)
 
-まだ確定していない結果を単一の型で扱うことによりコードの取り回しをよくします。[Async Helper](https://github.com/ydipeepo/godot-async-helper) (Godot 3) の Godot 4 移植版。
+Godot 4 の await 足回りを強化するアドオン。[Async Helper](https://github.com/ydipeepo/godot-async-helper) (Godot 3) の Godot 4 移植版です。
 
-* 実装が単純なので高速です
-* シグナルやコルーチンが入り組むコードを自然に書けるようになります
+<br />
+
+* 実装が単純なので高速
+* シグナルやコルーチンが入り組むコードの見通しを良くし、自然に書けるようにします
 * yield によるイテレーションを再現するパターンを含みます
 
 <br />
