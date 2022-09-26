@@ -33,8 +33,6 @@ func next(value = null) -> Async:
 
 #-------------------------------------------------------------------------------
 
-signal _init_sync
-
 var _runner: Async
 var _set_result_queue: Array[Callable] = []
 var _set_value_queue: Array[Callable] = []
