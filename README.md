@@ -255,9 +255,9 @@ JS の Promise や Iterator, Generator に近くなってます。
 
 <br />
 
-## 使い方
+## リファレンス
 
-Wiki に移しました。
+[Wiki](https://github.com/ydipeepo/godot-nesink/wiki) に移しました。
 
 <br />
 
