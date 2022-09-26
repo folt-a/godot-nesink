@@ -44,7 +44,7 @@
 
 <br />
 
-## 使い方
+## どうやって使うの？
 
 [Wiki](https://github.com/ydipeepo/godot-nesink/wiki) に移しました。
 
