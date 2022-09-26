@@ -11,43 +11,234 @@
 
 <br />
 
-# Nesinkrona
+# Nesinkrona (β)
 
-未来に確定する結果やシグナルを未定の段階から統一した単位にすることによりコードの取り回しをよくします。そのためのアドオンです。[Async Helper](https://github.com/ydipeepo/godot-async-helper) (Godot 3) の Godot 4 移植版。
-
-<br />
+まだ確定していない結果を単一の型で扱うことによりコードの取り回しをよくします。[Async Helper](https://github.com/ydipeepo/godot-async-helper) (Godot 3) の Godot 4 移植版。
 
 * 実装が単純なので高速です
-* await するその 1 段階前から単位にしますので、シグナルやコルーチンが入り組むコードを簡素化できます
-* yield によるジェネレータ、イテレータを再現したパターンを含みます
+* シグナルやコルーチンが入り組むコードを自然に書けるようになります
+* yield によるイテレーションを再現するパターンを含みます
 
 <br />
 
-### Async Helper からのおおまかな変更点
+#### 何のために作ったか
 
-- `Task` -> `Async` に変更
-- `TaskUnit` -> `Async` に変更
-- `when_*()` メソッドは状態を含めた 2 種類に分割
-  * `Task.when_all()` -> `Async.all()` (すべて完了) / `Async.all_settled()` (すべて完了もしくはキャンセル)
-  * `Task.when_any()` -> `Async.any()` (どれか完了) / `Async.race()` (どれか完了もしくはキャンセル)
-- `CancellationTokenSource` -> `Cancel` (トークンに分離せず共有する形にした)
-- インライン関数が書けるようになったので関連するメソッドを追加
-  * 継続メソッドを追加 `async.then()`
-  * 自己キャンセルできるようにした `Async.from_callback()` / `async.then_callback()`
-- 待機のタイミングを `async.wait()` にまとめた
-- ネストされた単位をアンラップするメソッドを追加 `async.unwrap()`
-- yield でやってたステップイテレーション -> `AsyncGenerator` 型、`AsyncIterator` 型で再現 (`AsyncGenerator.from()` / `AsyncIterator.from()`)
-- ドキュメントコメントつけた
+(AsyncHelper でも似たような問題に対処していましたが、このアドオンはもう少しパターン化して) 非同期的な処理を書いていると出くわす困った状況の解決を安全に手助けします。
+
+<br />
+
+##### 例えば...
+
+例えば 3.5 での yield による待機:
+
+```GDScript
+#
+# シグナル a もしくはシグナル b, もしくは一定時間が経過したらシグナル f を発火させたい
+#
+
+signal a
+signal b
+signal f
+
+var _counter = 0
+
+func _wait_a():
+	yield(self, "a")
+	_counter += 1
+	if _counter == 1: emit_signal("f")
+
+func _wait_b():
+	yield(self, "b")
+	_counter += 1
+	if _counter == 1: emit_signal("f")
+
+func _wait_timeout():
+	yield(get_tree().create_timer(3.0), "timeout")
+	_counter += 1
+	if _counter == 1: emit_signal("f")
+
+func _begin_wait():
+	_counter = 0
+	_wait_a()       # 並列的に動かしたいため yield しない
+	_wait_b()       # 同上
+	_wait_timeout() # 同上
+```
+
+GDScript 2.0 (少なくとも beta1) では、これが await になりました。以下のような書き方ができて一見ちょっと便利です:
+
+```GDScript
+signal a
+signal b
+signal f
+
+func _begin_wait():
+	var state = { "counter": 0 } # コピーキャプチャされるため辞書に入れた
+	var wait_a = func():
+		await a
+		state.counter += 1
+		if state.counter == 1: f.emit()
+	func wait_b = func():
+		await b
+		state.counter += 1
+		if state.counter == 1: f.emit()
+	func wait_timeout = func():
+		await get_tree().create_timer(3.0).timeout
+		state.counter += 1
+		if state.counter == 1: f.emit()
+	wait_a.call()
+	wait_b.call()
+	wait_timeout.call()
+```
+
+yield から await に変わって、インライン関数も加わって、機能モリモリで書きやすさは向上しましたが何か問題は残ったままな感じです。このアドオンでその匂いを消臭します:
+
+```GDScript
+signal a
+signal b
+signal f
+
+func _begin_wait():
+	await Async.wait_any([
+		Async.from_signal(a),
+		Async.from_signal(b),
+		Async,delay(3.0)])
+	f.emit()
+```
+
+短くなりました。
+
+<br />
+
+##### 他にも...
+
+例えばフェードインさせもしその途中にマウス左ボタンが押されたらスキップさせるとします:
+
+```GDScript
+func _ready():
+	$ColorRect.color.a = 0.0
+	var state = { "counter": 0 }
+	var tween = create_tween()
+	var wait_trailer = func():
+		tween.stop()
+		$ColorRect.color.a = 1.0
+	var wait_tween = func():
+		tween.tween_property($ColorRect, "color:a", 1.0, 3.0)
+		await tween.finished # *1
+		state.counter += 1
+		if state.counter == 1: wait_trailer.call()
+	var wait_input = func():
+		while state.counter == 0:
+			var event = (await gui_input) as InputEventMouseButton
+			if event and event.button_index == MOUSE_BUTTON_LEFT and event.is_pressed:
+				state.counter += 1
+				if state.counter == 1: wait_trailer.call()
+				break
+	wait_tween.call()
+	wait_input.call()
+```
+
+上下に処理が行ったり来たりしてしまって読みにくいです。なので Async を使って以下のようにします:
+
+```GDScript
+func _ready():
+	$ColorRect.color.a = 0.0
+	var tween = create_tween()
+	tween.tween_property($ColorRect, "color:a", 1.0, 3.0)
+	await Async.wait_any([
+		Async.from_signal(tween.finished),
+		Async.from(func():
+			while true:
+				var event = (await gui_input) as InputEventMouseButton
+				if event and event.button_index == MOUSE_BUTTON_LEFT and event.is_pressed:
+					break)
+	])
+	tween.stop()
+	$Color.color.a = 1.0
+```
+
+プログラムの流れが一方向になり少し短くなりました。もう少しわかりやすいように何度も使うような処理はヘルパーを作ってしまうと楽です:
+
+```GDScript
+func Async_from_mouse_button(button_index: int) -> Async:
+	var state := { "async": null }
+	state.async = Async.from(func():
+		while state.async == null or state.async.is_pending:
+			var event = (await gui_input) as InputEventMouseButton
+			if event and event.button_index == button_index and event.is_pressed:
+				break)
+	return state.async
+```
+
+こういうのを準備しておけばもう少し短くなります:
+
+```GDScript
+func _ready():
+	var tween = create_tween()
+	tween.tween_property($ColorRect, "color:a", 1.0, 3.0)
+	await Async.wait_any([
+		Async.from_signal(tween.finished),
+		Async_from_mouse_button(MOUSE_BUTTON_LEFT),
+	])
+	tween.stop()
+	$Color.color.a = 1.0
+```
+
+<br />
+
+#### AsyncHelper からの変更点
+
+Godot 3.5 GDScript の制約上妥協していた箇所の設計を変え (グッジョブ 4.0)、さらに単位が結果を返せるようになりました。またいくつかの機能が加わっています。
+
+<br />
+
+##### 変更箇所
+
+* Task を Async に変更
+* TaskUnit を Async に変更
+* Task.when_all() を Async.all() に変更
+* Task.when_any() を Async.any() に変更
+
+* CancellationTokenSource と CancellationToken を Cancel に変更 (1 つにまとめた)
+* Task.from_signal() を Async.from_signal_name() に変更
+
+<br />
+
+##### 新しく追加された機能
+
+* Async.all_settled() を追加 (Async.all() はすべての完了を待つが、Async.all_settled() は完了を問わず処理を終えたことを待つ)
+* Async.race() を追加 (Async.any() はどれか 1 つの完了を待つが、Async.race() は完了を問わず処理を終えたことを待つ)
+* インライン関数 (ラムダ式、正式な名前不明) から生成メソッドを追加
+  * Async.from()
+  * Async.from_callback()
+
+* また、継続メソッドを追加
+  * async.then()
+  * async.then_callback()
+* Signal オブジェクトに対応した生成メソッドを追加
+  * Async.from_signal()
+* キャンセルのタイミングを ?sync.*_callback() メソッドを除き async.wait() に集約した
+* ネストされた Async をアンラップするメソッドを追加
+  * async.unwrap()
+* AsyncIterator を追加
+  * yield & GDScriptFunctionState.resume() でやっていたイテレータ的なものを Async で再現したもの
+* AsyncGenerator を追加
+  * AsyncIterator を双方向にしたもので、生成側からコルーチンへも値を渡せる
+
+<br />
 
 JS の Promise や Iterator, Generator に近くなってます。
+
+<br />
 
 ---
 
 <br />
 
+<br />
+
 ## 準備
 
-まだテスト段階のため、Godot AssetLib では配信されていません。
+まだ beta1 に合わせて書き直した段階ですので、Godot AssetLib では配信していませんし申請もしていません。
 
 <br />
 
@@ -64,262 +255,16 @@ JS の Promise や Iterator, Generator に近くなってます。
 
 <br />
 
-## Async
+## 使い方
 
-Async というクラスが非同期的な処理 (コルーチンもしくはシグナル) をラップし抽象化する役割を持っています。このクラスはこのアドオンの中心となり、いくつかのファクトリメソッドを持ちます。
-
-<br />
-
-```GDScript
-signal my_signal
-
-var a1 := Async.from_signal(my_signal)
-var a2 := Async.from(func():
-	var tween := create_tween()
-	tween.tween_property($Button, "modulate", Color.WHITE)
-	tween.play()
-	await tween.finished)
-var a3 := Async.delay(3.0)
-await Async.wait_all([a1, a2, a3])
-$Button.text = "Hi!"
-```
+Wiki に移しました。
 
 <br />
-
-このクラスは 1 つの非同期的な処理を抽象化し、その処理の状態と完了した場合は 1 つの結果を保持します。
-
-<br />
-
-#### 状態
-
-Async クラスは `is_completed` プロパティ、`is_canceled` プロパティ、`is_pending` という 3 つのプロパティを持ち、そのプロパティが true を返すかにより 3 つの状態を表現します。
-ほとんどのケースでは、明示的に `Cancel` を使いキャンセルしない限り `is_canceled` が true になることはないです。(`Async.all()` や `Async.any()` で結果を生成できない場合はキャンセルされることがあります)
-
-```mermaid
-graph LR
-STATE_PENDING[is_pending == true<br /><b>待機中</br>] --> STATE_COMPLETED[is_completed == true<br /><b>完了した</b>]
-STATE_PENDING --> STATE_CANCELED[is_canceled == true<br /><b>キャンセルされた</b>]
-```
-
-* **待機中**
-  `is_pending == true and (is_completed == false and is_canceled == false)`
-* **完了した**
-  `is_completed == true and (is_pending == false and is_canceled == false)`
-* **キャンセルされた**
-  `is_canceled == true and (is_pending == false and is_completed == false)`
-
-`is_completed` と `is_canceled`、`is_pending` は常に 1 つが true となります。2 つ以上が true になることはありません。
-
-
-
-<br />
-
-
-
-#### 結果
-
-ファクトリメソッドから `Async` を作成した段階でまだ結果が決まっていないことがあります。これは、例えばシグナルを `Async` に変換した場合、シグナルを発火するまでその結果が分からないためです。`Async` クラスは `wait()` というメソッドを持ちそのメソッド呼び出しを await することにより結果を得ます。
-
-```GDScript
-# 何らかの GUI 入力があるまで結果がわからない
-var async := Async.from_signal(self.gui_input, 1)
-# GUI 入力があるまで待機
-var event := await async.wait()
-```
-
-* `wait()` が返す結果は、一度完了すると変化することはありません。
-* `wait()` を待機した後は、`is_completed` か `is_canceled` のどちらかが必ず true となりますが、待機前の状態は不定です。(待機前から完了もしくはキャンセルされていることがあります)
-* キャンセルされた場合の戻り値は null となりますが、完了していても null を返す場合がありますので、キャンセルされる可能性がある場合は必ず `is_pending`、`is_completed` や `is_canceled` をチェックします。
-
-
-
-<br />
-
-
-
-#### 継続
-
-何らかの `Async` が完了したあとその結果に続けて処理をさせたい場合は `wait()` メソッドを使い値を取り出す以外に、`then()` というメソッドを使い新たな `Async` にしてしまうことができます。
-
-```GDScript
-var async1 := Async.from_signal(self.gui_input, 1)
-
-# GUI 入力があったとき、そのイベントを print
-var async2 := async1.then(func(event): print(event))
-
-# (必要があれば) async2 のように変数を保管しておき、待機することもできます
-await async2.wait()
-```
-
-
-
-<br />
-
-
-
-### いくつかの重要なメソッド
-
-Async が公開する static なメソッドはすべて新たな Async を作成するためのものですが、その中でもいくつか重要なものがあります。
-
-
-
-#### Async.all(drains: Array, cancel: Cancel = null) -> Async
-
-すべての Drain の完了を待機し、その結果を配列に格納したものが結果となる `Async` を作成します。
-
-```mermaid
-flowchart LR
-
-subgraph Drain #1
-VALUE_A(1234)
-end
-subgraph Drain #2
-VALUE_B("'abcd'")
-end
-subgraph Drain #3
-VALUE_C(true)
-end
-
-VALUE_A --> ACTION(("Async.all()"))
-VALUE_B --> ACTION
-VALUE_C --> ACTION
-
-subgraph Output
-VALUE_D("[1234, 'abcd', true]")
-end
-
-ACTION --> Output
-```
-
-* すべての入力が完了した場合にのみ Output の `is_completed` が true となります。
-* 第二引数は Drain の `wait()` に対し与えられるものです。
-* キャンセルされたとしても結果が必要な場合はこのメソッドではなく、`Async.all_settled()` を使います。
-
-
-
-#### Async.all_settled(drains: Array, cancel: Cancel = null) -> Async
-
-すべての Drain が完了もしくはキャンセルされるまで待機し、その結果を `Async` の配列としたものが結果となる `Async` を作成します。
-
-```mermaid
-flowchart LR
-
-subgraph Drain #1
-VALUE_A(1234)
-end
-subgraph Drain #2
-VALUE_B("'abcd'")
-end
-subgraph Drain #3
-VALUE_C(true)
-end
-
-VALUE_A --> ACTION(("Async.all_settled()"))
-VALUE_B --> ACTION
-VALUE_C --> ACTION
-
-subgraph Output
-subgraph Source #1
-VALUE_D(1234)
-end
-subgraph Source #2
-VALUE_E("'abcd'")
-end
-subgraph Source #3
-VALUE_F(true)
-end
-end
-
-ACTION --> Output
-```
-
-* すべてがの Drain が完了もしくはキャンセルされた場合、Output の `is_completed` が true となります。
-* 第二引数は Drain の `wait()` に対し与えられるものです。
-
-
-
-#### Async.any(drains: Array, cancel: Cancel = null) -> Async
-
-すべての Drain のうちどれか一つが完了するまで待機し、(その結果が) そのまま結果となる `Async` を作成します。
-
-```mermaid
-flowchart LR
-
-subgraph Drain #1
-VALUE_A(1234)
-end
-subgraph Drain #2
-VALUE_B("'abcd'")
-end
-subgraph Drain #3
-VALUE_C(true)
-end
-
-VALUE_A --> ACTION(("Async.any()"))
-VALUE_B --> ACTION
-VALUE_C --> ACTION
-
-subgraph Output
-VALUE_D(1234)
-end
-
-ACTION --> Output
-```
-
-* Drain がすべてキャンセルされた場合、Output の `is_canceled` が true となります。
-* 第二引数は Drain の `wait()` に対し与えられるものです。
-* キャンセルされたとしても結果が必要な場合はこのメソッドではなく、`Async.race()` を使います。
-
-
-
-#### Async.race(drains: Array, cancel: Cancel = null) -> Async
-
-すべての Drain のうちどれか一つが完了もしくはキャンセルされるまで待機し、その結果を `Async` としたものが結果となる `Async` を作成します。
-
-```mermaid
-flowchart LR
-
-subgraph Drain #1
-VALUE_A(1234)
-end
-subgraph Drain #2
-VALUE_B("'abcd'")
-end
-subgraph Drain #3
-VALUE_C(true)
-end
-
-VALUE_A --> ACTION(("Async.race()"))
-VALUE_B --> ACTION
-VALUE_C --> ACTION
-
-subgraph Output
-subgraph Source
-VALUE_D(1234)
-end
-end
-
-ACTION --> Output
-```
-
-* Drain がすべてキャンセルされた場合でも、Output の `is_completed` は true となります。
-* 第二引数は Drain の `wait()` に対し与えられるものです。
-
-
-
-<br />
-
-
 
 ---
 
-
-
 <br />
-
-
 
 ## バグの報告や要望など
 
 バグの修正や報告、ドキュメント翻訳、およびその他の改善など歓迎いたします。
-
