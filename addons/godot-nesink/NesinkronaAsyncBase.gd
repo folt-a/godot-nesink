@@ -35,6 +35,35 @@ func cancel_release() -> void:
 			_state = STATE_CANCELED
 			_release.emit()
 
+# https://github.com/ydipeepo/godot-nesink/issues/4
+static func normalize_drain(drain):
+	if drain is Array:
+		match len(drain):
+#			3:
+#				if drain[0] is Object and (drain[1] is String or drain[1] is StringName) and drain[2] is int:
+#					return NesinkronaFromSignalNameAsync.new(drain[0], drain[1], drain[2])
+			2:
+#				if drain[0] is Object and (drain[1] is String or drain[1] is StringName):
+#					return NesinkronaFromSignalNameAsync.new(drain[0], drain[1], 0)
+				if drain[0] is Signal and drain[1] is int:
+					return NesinkronaFromSignalAsync.new(drain[0], drain[1])
+			1:
+#				if drain[0] is Object:
+#					return NesinkronaFromSignalNameAsync.new(drain[0], "completed", 0)
+				if drain[0] is Signal:
+					return NesinkronaFromSignalAsync.new(drain[0], 0)
+
+#	if drain is Object:
+#		return NesinkronaFromSignalNameAsync.new(drain[0], "completed", 0)
+
+	if drain is Signal:
+		return NesinkronaFromSignalAsync.new(drain, 0)
+
+	if drain is Callable:
+		return NesinkronaFromAsync.new(drain)
+
+	return drain
+
 #---------------------------------------------------------------------------------------------------
 
 signal _release

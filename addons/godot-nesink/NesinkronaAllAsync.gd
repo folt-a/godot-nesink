@@ -25,7 +25,7 @@ func _init(
 	_pending_drains = drain_count
 	for drain_index in drain_count:
 		_init_gate(
-			drains[drain_index],
+			normalize_drain(drains[drain_index]),
 			drain_cancel,
 			drain_index,
 			result)
