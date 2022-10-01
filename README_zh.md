@@ -48,7 +48,7 @@ await another_async.wait(cancel)
 
 <br />
 
-* 它提高了与信号和程序交织在一起的代码的可见度和自然度。(类似于 JS 的 Promise 或 C# 的 Task)
+* 它提高了与信号和程序交织在一起的代码的可读性和自然度。(类似于 JS 的 Promise 或 C# 的 Task)
 * 由于代码简单，所以速度快。
 * 可以从外部取消 await。
 * 包含 yield 重现迭代的类型。(实验的)
