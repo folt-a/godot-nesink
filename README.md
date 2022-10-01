@@ -48,7 +48,7 @@ An addon to enhance the awaitability of GDScript 2.0.
 
 <br />
 
-* It improves the visibility and naturalness of code that is intermingled with signals and coroutines. (similar to Promise in JS or Task in C#).
+* It improves the readability and naturalness of code that is intermingled with signals and coroutines. (similar to Promise in JS or Task in C#).
 * Fast due to simple implementation.
 * Can be canceled from outside of await.
 * Contains patterns that reproduce iterations with yield. (experimental)
