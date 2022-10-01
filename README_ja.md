@@ -78,9 +78,7 @@ Godot 4 の await 足回りを強化するアドオン。[Async Helper](https://
 
 <br />
 
-## どうやって使うの？
-
-[📖 Wiki](https://github.com/ydipeepo/godot-nesink/wiki) に移しました。
+Async クラス詳細はこちら: [📖 Wiki](https://github.com/ydipeepo/godot-nesink/wiki/Async)
 
 <br />
 
