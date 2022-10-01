@@ -1,4 +1,4 @@
-English | 日本語 | 简体中文
+[English](https://github.com/ydipeepo/godot-nesink/blob/main/README.md) | 日本語 | 简体中文
 
 <br />
 
