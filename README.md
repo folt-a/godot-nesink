@@ -19,7 +19,7 @@ Godot 4 の await 足回りを強化するアドオン。[Async Helper](https://
 
 * シグナルやコルーチンが入り組むコードの見通しを良くし、自然に書けるようにします
 * 実装が単純なので高速です
-* yield によるイテレーションを再現するパターンを含みます
+* yield によるイテレーションを再現するパターンを含みます (実験的)
 
 <br />
 
@@ -28,8 +28,6 @@ Godot 4 の await 足回りを強化するアドオン。[Async Helper](https://
 <br />
 
 ## 準備
-
-まだ beta1 に合わせて書き直した段階ですので、Godot AssetLib では配信していませんし申請もしていません。
 
 <br />
 
@@ -48,7 +46,7 @@ Godot 4 の await 足回りを強化するアドオン。[Async Helper](https://
 
 ## どうやって使うの？
 
-[Wiki](https://github.com/ydipeepo/godot-nesink/wiki) に移しました。
+[📖 Wiki](https://github.com/ydipeepo/godot-nesink/wiki) に移しました。
 
 <br />
 
