@@ -1,4 +1,4 @@
-日本語
+English | 日本語 | 简体中文
 
 <br />
 
@@ -10,11 +10,9 @@
 ```GDScript
 # 複数の Async もしくは Signal, コルーチンを新たな Async としてまとめることができます
 var all_async := Async.all([
-    Async.from(_coro), # from Async
-    obj.signal, # from Signal
-    func():
-        # from Coroutine
-        pass
+    Async.from(_coro), # Async から
+    obj.signal,        # Signal から
+    func(): return 0   # Coroutine から
 ])
 var result = await all_async.wait()
 
@@ -27,7 +25,7 @@ var result = await Async.wait_all([
         pass
 ])
 
-# いくつかの await しやすくするためのメソッドがあります
+# await のための一般的なメソッドをすべて含みます
 Async.all()
 Async.all_settled()
 Async.any()
@@ -37,7 +35,7 @@ Async.wait_all_settled()
 Async.wait_any()
 Async.wait_race()
 
-# そして継続やキャンセルをサポートします
+# 継続やキャンセルもサポートします
 var another_async = async.then(func(prev_result):
     return prev_result * prev_result)
 var cancel := Cancel.new()
@@ -46,7 +44,7 @@ await another_async.wait(cancel)
 
 <br />
 
-# Nesinkrona (β)
+# Nesinkrona (for Godot 4 β1, 2)
 
 Godot 4 の await 足回りを強化するアドオン。[Async Helper](https://github.com/ydipeepo/godot-async-helper) (Godot 3) の Godot 4 移植版です。
 
