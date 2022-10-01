@@ -10,19 +10,17 @@ English | [日本語](https://github.com/ydipeepo/godot-nesink/blob/main/README_
 ```GDScript
 # Multiple Async or Signal or Coroutine can be combined into a new Async
 var all_async := Async.all([
-    Async.from(_coro), # Async から
-    obj.signal,        # Signal から
-    func(): return 0   # Coroutine から
+    Async.from(_coro), # from Async
+    obj.signal,        # from Signal
+    func(): return 0   # from Coroutine
 ])
 var result = await all_async.wait()
 
 # or you can await it immediately.
 var result = await Async.wait_all([
-    Async.from(_coro), # from Async
-    obj.signal, # from Signal
-    func():
-        # from Coroutine
-        pass
+    Async.from(_coro),
+    obj.signal,
+    func(): return 0
 ])
 
 # Includes general patterns for await
@@ -68,7 +66,7 @@ An addon to enhance the awaitability of GDScript 2.0.
 #### Checking demos
 
 1. Git clone then open in Godot Engine.
-2. (Select `demo/Demo.tscn` as Main Scene then) F5!アドオンを導入したい
+2. (Select `demo/Demo.tscn` as Main Scene then) F5!
 
 
 
