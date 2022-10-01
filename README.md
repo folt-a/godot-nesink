@@ -7,10 +7,6 @@
 
 <br />
 
-![Nesinkrona](https://raw.githubusercontent.com/ydipeepo/godot-nesink/main/header.png)
-
-<br />
-
 # Nesinkrona (β)
 
 Godot 4 の await 足回りを強化するアドオン。[Async Helper](https://github.com/ydipeepo/godot-async-helper) (Godot 3) の Godot 4 移植版です。
