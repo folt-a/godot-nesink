@@ -1,8 +1,14 @@
-English | [日本語](https://github.com/ydipeepo/godot-nesink/blob/main/README_ja.md) | [简体中文](https://github.com/ydipeepo/godot-nesink/blob/main/README_zh.md)
+<br />
+
+<strong>This repo was no longer maintained. Idk know it still works now or not, but feel free to use it if you need.</strong>
 
 <br />
 
-This repo was no longer maintained. Idk know it still works now or not, but feel free to use it if you need.
+---
+
+<br />
+
+English | [日本語](https://github.com/ydipeepo/godot-nesink/blob/main/README_ja.md) | [简体中文](https://github.com/ydipeepo/godot-nesink/blob/main/README_zh.md)
 
 <br />
 
