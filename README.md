@@ -2,6 +2,10 @@ English | [日本語](https://github.com/ydipeepo/godot-nesink/blob/main/README_
 
 <br />
 
+This repo was no longer maintained. Idk know it still works now or not, but feel free to use it if you need.
+
+<br />
+
 [![MIT License](https://img.shields.io/badge/License-MIT-25B3A0?style=flat-square)](https://github.com/ydipeepo/godot-motion/blob/main/LICENSE.md)
 [![@ydipeepo](https://img.shields.io/badge/@ydipeepo-1DA1F2?style=flat-square&logo=twitter&logoColor=white)](https://twitter.com/ydipeepo)
 
