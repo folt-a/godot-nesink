@@ -1,5 +1,5 @@
 ## [Async] や [AsyncSequence] にキャンセルが要求されたことを伝えるためのクラスです。
-class_name Cancel
+class_name Cancel extends RefCounted
 
 #-------------------------------------------------------------------------------
 # シグナル

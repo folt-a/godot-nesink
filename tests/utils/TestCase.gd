@@ -78,7 +78,7 @@ func delay_emit_5(timeout: float, arg1, arg2, arg3, arg4, arg5) -> void:
 	_tree.create_timer(timeout).timeout.connect(emit_5.bind(arg1, arg2, arg3, arg4, arg5))
 
 func run() -> void:
-	@warning_ignore(redundant_await)
+	@warning_ignore("redundant_await")
 	await _test_method.call(self)
 
 	var text := _name + "\n"

@@ -13,7 +13,7 @@ grow_vertical = 2
 script = ExtResource("1_ymenf")
 
 [node name="Background" type="Control" parent="."]
-modulate = Color(1, 1, 1, 0.0627451)
+modulate = Color(1, 1, 1, 0.333333)
 layout_mode = 3
 anchors_preset = 0
 offset_left = 160.0
@@ -23,10 +23,13 @@ offset_bottom = 776.0
 metadata/_edit_lock_ = true
 
 [node name="Line1" type="Label" parent="Background"]
-offset_right = 1152.0
-offset_bottom = 144.0
+layout_mode = 0
+offset_left = -160.0
+offset_top = -93.0
+offset_right = 992.0
+offset_bottom = 52.0
 auto_translate = false
-theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_colors/font_color = Color(0.478431, 0.478431, 0.478431, 1)
 theme_override_colors/font_outline_color = Color(1, 1, 1, 1)
 theme_override_constants/outline_size = 2
 theme_override_fonts/font = ExtResource("2_8nrwk")
@@ -38,11 +41,13 @@ visible_ratio = 0.0
 metadata/_edit_lock_ = true
 
 [node name="Line2" type="Label" parent="Background"]
-offset_top = 144.0
-offset_right = 1152.0
-offset_bottom = 288.0
+layout_mode = 0
+offset_left = -160.0
+offset_top = 51.0
+offset_right = 992.0
+offset_bottom = 196.0
 auto_translate = false
-theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_colors/font_color = Color(0.478431, 0.478431, 0.478431, 1)
 theme_override_colors/font_outline_color = Color(1, 1, 1, 1)
 theme_override_constants/outline_size = 2
 theme_override_fonts/font = ExtResource("2_8nrwk")
@@ -54,11 +59,13 @@ visible_ratio = 0.0
 metadata/_edit_lock_ = true
 
 [node name="Line3" type="Label" parent="Background"]
-offset_top = 288.0
-offset_right = 1152.0
-offset_bottom = 432.0
+layout_mode = 0
+offset_left = -160.0
+offset_top = 195.0
+offset_right = 992.0
+offset_bottom = 340.0
 auto_translate = false
-theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_colors/font_color = Color(0.478431, 0.478431, 0.478431, 1)
 theme_override_colors/font_outline_color = Color(1, 1, 1, 1)
 theme_override_constants/outline_size = 2
 theme_override_fonts/font = ExtResource("2_8nrwk")
@@ -70,11 +77,13 @@ visible_ratio = 0.0
 metadata/_edit_lock_ = true
 
 [node name="Line4" type="Label" parent="Background"]
-offset_top = 432.0
-offset_right = 1152.0
-offset_bottom = 576.0
+layout_mode = 0
+offset_left = -160.0
+offset_top = 339.0
+offset_right = 992.0
+offset_bottom = 484.0
 auto_translate = false
-theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_colors/font_color = Color(0.478431, 0.478431, 0.478431, 1)
 theme_override_colors/font_outline_color = Color(1, 1, 1, 1)
 theme_override_constants/outline_size = 2
 theme_override_fonts/font = ExtResource("2_8nrwk")
@@ -85,8 +94,17 @@ visible_characters = 0
 visible_ratio = 0.0
 metadata/_edit_lock_ = true
 
+[node name="Panel" type="Panel" parent="."]
+modulate = Color(1, 1, 1, 0.239216)
+layout_mode = 0
+offset_left = 86.0
+offset_top = 50.0
+offset_right = 805.0
+offset_bottom = 428.0
+
 [node name="AsyncLabel" type="Label" parent="."]
 modulate = Color(1, 1, 1, 0.878431)
+layout_mode = 0
 offset_left = 32.0
 offset_right = 768.0
 offset_bottom = 64.0
@@ -97,6 +115,7 @@ vertical_alignment = 1
 metadata/_edit_lock_ = true
 
 [node name="AsyncAll" type="Button" parent="."]
+layout_mode = 0
 offset_left = 96.0
 offset_top = 64.0
 offset_right = 312.0
@@ -105,6 +124,7 @@ text = "Async.all()"
 metadata/_edit_lock_ = true
 
 [node name="AsyncAllCancel" type="Button" parent="."]
+layout_mode = 0
 offset_left = 320.0
 offset_top = 64.0
 offset_right = 408.0
@@ -115,6 +135,7 @@ text = "Cancel"
 metadata/_edit_lock_ = true
 
 [node name="AsyncAllStatus" type="Panel" parent="."]
+layout_mode = 0
 offset_left = 416.0
 offset_top = 64.0
 offset_right = 800.0
@@ -122,6 +143,7 @@ offset_bottom = 96.0
 metadata/_edit_lock_ = true
 
 [node name="_1" type="CheckBox" parent="AsyncAllStatus"]
+layout_mode = 0
 offset_right = 64.0
 offset_bottom = 32.0
 focus_mode = 0
@@ -130,6 +152,7 @@ text = "#1"
 metadata/_edit_lock_ = true
 
 [node name="_2" type="CheckBox" parent="AsyncAllStatus"]
+layout_mode = 0
 offset_left = 64.0
 offset_right = 128.0
 offset_bottom = 32.0
@@ -139,6 +162,7 @@ text = "#2"
 metadata/_edit_lock_ = true
 
 [node name="_3" type="CheckBox" parent="AsyncAllStatus"]
+layout_mode = 0
 offset_left = 128.0
 offset_right = 192.0
 offset_bottom = 32.0
@@ -148,6 +172,7 @@ text = "#3"
 metadata/_edit_lock_ = true
 
 [node name="_4" type="CheckBox" parent="AsyncAllStatus"]
+layout_mode = 0
 offset_left = 192.0
 offset_right = 256.0
 offset_bottom = 32.0
@@ -157,6 +182,7 @@ text = "#4"
 metadata/_edit_lock_ = true
 
 [node name="Label" type="Label" parent="AsyncAllStatus"]
+layout_mode = 0
 offset_left = 256.0
 offset_right = 384.0
 offset_bottom = 32.0
@@ -165,6 +191,7 @@ vertical_alignment = 1
 metadata/_edit_lock_ = true
 
 [node name="AsyncAllSettled" type="Button" parent="."]
+layout_mode = 0
 offset_left = 96.0
 offset_top = 112.0
 offset_right = 312.0
@@ -173,6 +200,7 @@ text = "Async.all_settled()"
 metadata/_edit_lock_ = true
 
 [node name="AsyncAllSettledCancel" type="Button" parent="."]
+layout_mode = 0
 offset_left = 320.0
 offset_top = 112.0
 offset_right = 408.0
@@ -183,6 +211,7 @@ text = "Cancel"
 metadata/_edit_lock_ = true
 
 [node name="AsyncAllSettledStatus" type="Panel" parent="."]
+layout_mode = 0
 offset_left = 416.0
 offset_top = 112.0
 offset_right = 800.0
@@ -190,6 +219,7 @@ offset_bottom = 144.0
 metadata/_edit_lock_ = true
 
 [node name="_1" type="CheckBox" parent="AsyncAllSettledStatus"]
+layout_mode = 0
 offset_right = 64.0
 offset_bottom = 32.0
 focus_mode = 0
@@ -198,6 +228,7 @@ text = "#1"
 metadata/_edit_lock_ = true
 
 [node name="_2" type="CheckBox" parent="AsyncAllSettledStatus"]
+layout_mode = 0
 offset_left = 64.0
 offset_right = 128.0
 offset_bottom = 32.0
@@ -207,6 +238,7 @@ text = "#2"
 metadata/_edit_lock_ = true
 
 [node name="_3" type="CheckBox" parent="AsyncAllSettledStatus"]
+layout_mode = 0
 offset_left = 128.0
 offset_right = 192.0
 offset_bottom = 32.0
@@ -216,6 +248,7 @@ text = "#3"
 metadata/_edit_lock_ = true
 
 [node name="_4" type="CheckBox" parent="AsyncAllSettledStatus"]
+layout_mode = 0
 offset_left = 192.0
 offset_right = 256.0
 offset_bottom = 32.0
@@ -225,6 +258,7 @@ text = "#4"
 metadata/_edit_lock_ = true
 
 [node name="Label" type="Label" parent="AsyncAllSettledStatus"]
+layout_mode = 0
 offset_left = 256.0
 offset_right = 384.0
 offset_bottom = 32.0
@@ -233,6 +267,7 @@ vertical_alignment = 1
 metadata/_edit_lock_ = true
 
 [node name="AsyncAny" type="Button" parent="."]
+layout_mode = 0
 offset_left = 96.0
 offset_top = 160.0
 offset_right = 312.0
@@ -241,6 +276,7 @@ text = "Async.any()"
 metadata/_edit_lock_ = true
 
 [node name="AsyncAnyCancel" type="Button" parent="."]
+layout_mode = 0
 offset_left = 320.0
 offset_top = 160.0
 offset_right = 408.0
@@ -251,6 +287,7 @@ text = "Cancel"
 metadata/_edit_lock_ = true
 
 [node name="AsyncAnyStatus" type="Panel" parent="."]
+layout_mode = 0
 offset_left = 416.0
 offset_top = 160.0
 offset_right = 800.0
@@ -258,6 +295,7 @@ offset_bottom = 192.0
 metadata/_edit_lock_ = true
 
 [node name="_1" type="CheckBox" parent="AsyncAnyStatus"]
+layout_mode = 0
 offset_right = 64.0
 offset_bottom = 32.0
 focus_mode = 0
@@ -266,6 +304,7 @@ text = "#1"
 metadata/_edit_lock_ = true
 
 [node name="_2" type="CheckBox" parent="AsyncAnyStatus"]
+layout_mode = 0
 offset_left = 64.0
 offset_right = 128.0
 offset_bottom = 32.0
@@ -275,6 +314,7 @@ text = "#2"
 metadata/_edit_lock_ = true
 
 [node name="_3" type="CheckBox" parent="AsyncAnyStatus"]
+layout_mode = 0
 offset_left = 128.0
 offset_right = 192.0
 offset_bottom = 32.0
@@ -284,6 +324,7 @@ text = "#3"
 metadata/_edit_lock_ = true
 
 [node name="_4" type="CheckBox" parent="AsyncAnyStatus"]
+layout_mode = 0
 offset_left = 192.0
 offset_right = 256.0
 offset_bottom = 32.0
@@ -293,6 +334,7 @@ text = "#4"
 metadata/_edit_lock_ = true
 
 [node name="Label" type="Label" parent="AsyncAnyStatus"]
+layout_mode = 0
 offset_left = 256.0
 offset_right = 384.0
 offset_bottom = 32.0
@@ -301,6 +343,7 @@ vertical_alignment = 1
 metadata/_edit_lock_ = true
 
 [node name="AsyncRace" type="Button" parent="."]
+layout_mode = 0
 offset_left = 96.0
 offset_top = 208.0
 offset_right = 312.0
@@ -309,6 +352,7 @@ text = "Async.race()"
 metadata/_edit_lock_ = true
 
 [node name="AsyncRaceCancel" type="Button" parent="."]
+layout_mode = 0
 offset_left = 320.0
 offset_top = 208.0
 offset_right = 408.0
@@ -319,6 +363,7 @@ text = "Cancel"
 metadata/_edit_lock_ = true
 
 [node name="AsyncRaceStatus" type="Panel" parent="."]
+layout_mode = 0
 offset_left = 416.0
 offset_top = 208.0
 offset_right = 800.0
@@ -326,6 +371,7 @@ offset_bottom = 240.0
 metadata/_edit_lock_ = true
 
 [node name="_1" type="CheckBox" parent="AsyncRaceStatus"]
+layout_mode = 0
 offset_right = 64.0
 offset_bottom = 32.0
 focus_mode = 0
@@ -334,6 +380,7 @@ text = "#1"
 metadata/_edit_lock_ = true
 
 [node name="_2" type="CheckBox" parent="AsyncRaceStatus"]
+layout_mode = 0
 offset_left = 64.0
 offset_right = 128.0
 offset_bottom = 32.0
@@ -343,6 +390,7 @@ text = "#2"
 metadata/_edit_lock_ = true
 
 [node name="_3" type="CheckBox" parent="AsyncRaceStatus"]
+layout_mode = 0
 offset_left = 128.0
 offset_right = 192.0
 offset_bottom = 32.0
@@ -352,6 +400,7 @@ text = "#3"
 metadata/_edit_lock_ = true
 
 [node name="_4" type="CheckBox" parent="AsyncRaceStatus"]
+layout_mode = 0
 offset_left = 192.0
 offset_right = 256.0
 offset_bottom = 32.0
@@ -361,6 +410,7 @@ text = "#4"
 metadata/_edit_lock_ = true
 
 [node name="Label" type="Label" parent="AsyncRaceStatus"]
+layout_mode = 0
 offset_left = 256.0
 offset_right = 384.0
 offset_bottom = 32.0
@@ -369,6 +419,7 @@ vertical_alignment = 1
 metadata/_edit_lock_ = true
 
 [node name="AsyncThen" type="Button" parent="."]
+layout_mode = 0
 offset_left = 96.0
 offset_top = 256.0
 offset_right = 312.0
@@ -377,6 +428,7 @@ text = "async.then()"
 metadata/_edit_lock_ = true
 
 [node name="AsyncThenCancel" type="Button" parent="."]
+layout_mode = 0
 offset_left = 320.0
 offset_top = 256.0
 offset_right = 408.0
@@ -387,6 +439,7 @@ text = "Cancel"
 metadata/_edit_lock_ = true
 
 [node name="AsyncThenStatus" type="Panel" parent="."]
+layout_mode = 0
 offset_left = 416.0
 offset_top = 256.0
 offset_right = 800.0
@@ -394,6 +447,7 @@ offset_bottom = 288.0
 metadata/_edit_lock_ = true
 
 [node name="_1" type="CheckBox" parent="AsyncThenStatus"]
+layout_mode = 0
 offset_right = 64.0
 offset_bottom = 32.0
 focus_mode = 0
@@ -402,6 +456,7 @@ text = "#1"
 metadata/_edit_lock_ = true
 
 [node name="_2" type="CheckBox" parent="AsyncThenStatus"]
+layout_mode = 0
 offset_left = 64.0
 offset_right = 128.0
 offset_bottom = 32.0
@@ -411,6 +466,7 @@ text = "#2"
 metadata/_edit_lock_ = true
 
 [node name="_3" type="CheckBox" parent="AsyncThenStatus"]
+layout_mode = 0
 offset_left = 128.0
 offset_right = 192.0
 offset_bottom = 32.0
@@ -420,6 +476,7 @@ text = "#3"
 metadata/_edit_lock_ = true
 
 [node name="_4" type="CheckBox" parent="AsyncThenStatus"]
+layout_mode = 0
 offset_left = 192.0
 offset_right = 256.0
 offset_bottom = 32.0
@@ -429,6 +486,7 @@ text = "#4"
 metadata/_edit_lock_ = true
 
 [node name="Label" type="Label" parent="AsyncThenStatus"]
+layout_mode = 0
 offset_left = 256.0
 offset_right = 384.0
 offset_bottom = 32.0
@@ -445,6 +503,7 @@ metadata/_edit_lock_ = true
 
 [node name="AsyncIteratorLabel" type="Label" parent="."]
 modulate = Color(1, 1, 1, 0.878431)
+layout_mode = 0
 offset_left = 32.0
 offset_top = 321.0
 offset_right = 768.0
@@ -456,6 +515,7 @@ vertical_alignment = 1
 metadata/_edit_lock_ = true
 
 [node name="AsyncIterator" type="Button" parent="."]
+layout_mode = 0
 offset_left = 96.0
 offset_top = 384.0
 offset_right = 312.0
@@ -464,6 +524,7 @@ text = "AsyncIterator.from()"
 metadata/_edit_lock_ = true
 
 [node name="AsyncIteratorNext" type="Button" parent="."]
+layout_mode = 0
 offset_left = 320.0
 offset_top = 384.0
 offset_right = 408.0
@@ -474,6 +535,7 @@ text = "Next"
 metadata/_edit_lock_ = true
 
 [node name="AsyncIteratorNextStatus" type="Panel" parent="."]
+layout_mode = 0
 offset_left = 416.0
 offset_top = 384.0
 offset_right = 800.0
@@ -481,6 +543,7 @@ offset_bottom = 416.0
 metadata/_edit_lock_ = true
 
 [node name="_1" type="CheckBox" parent="AsyncIteratorNextStatus"]
+layout_mode = 0
 offset_right = 64.0
 offset_bottom = 32.0
 focus_mode = 0
@@ -489,6 +552,7 @@ text = "#1"
 metadata/_edit_lock_ = true
 
 [node name="_2" type="CheckBox" parent="AsyncIteratorNextStatus"]
+layout_mode = 0
 offset_left = 64.0
 offset_right = 128.0
 offset_bottom = 32.0
@@ -498,6 +562,7 @@ text = "#2"
 metadata/_edit_lock_ = true
 
 [node name="_3" type="CheckBox" parent="AsyncIteratorNextStatus"]
+layout_mode = 0
 offset_left = 128.0
 offset_right = 192.0
 offset_bottom = 32.0
@@ -507,6 +572,7 @@ text = "#3"
 metadata/_edit_lock_ = true
 
 [node name="_4" type="CheckBox" parent="AsyncIteratorNextStatus"]
+layout_mode = 0
 offset_left = 192.0
 offset_right = 256.0
 offset_bottom = 32.0
@@ -516,6 +582,7 @@ text = "#4"
 metadata/_edit_lock_ = true
 
 [node name="Label" type="Label" parent="AsyncIteratorNextStatus"]
+layout_mode = 0
 offset_left = 256.0
 offset_right = 384.0
 offset_bottom = 32.0
@@ -532,6 +599,7 @@ metadata/_edit_lock_ = true
 
 [node name="Description" type="Label" parent="."]
 modulate = Color(1, 1, 1, 0.501961)
+layout_mode = 0
 offset_left = 96.0
 offset_top = 480.0
 offset_right = 800.0

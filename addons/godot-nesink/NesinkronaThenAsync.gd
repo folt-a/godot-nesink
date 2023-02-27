@@ -9,6 +9,7 @@ func _init(
 
 	assert(drain != null)
 	assert(coroutine != null)
+	super._init()
 	_init_gate(
 		drain,
 		drain_cancel,

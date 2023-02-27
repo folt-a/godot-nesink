@@ -1,9 +1,26 @@
-[English](https://github.com/ydipeepo/godot-nesink/blob/main/README.md) | 日本語 | [简体中文](https://github.com/ydipeepo/godot-nesink/blob/main/README_zh.md)
+Original repository is [https://github.com/ydipeepo/godot-nesink](https://github.com/ydipeepo/godot-nesink) **(Archived)**
+
+
+[English](https://github.com/folt-a/godot-nesink/blob/main/README.md) | 日本語 | [简体中文](https://github.com/folt-a/godot-nesink/blob/main/README_zh.md)
 
 <br />
 
-[![MIT License](https://img.shields.io/badge/License-MIT-25B3A0?style=flat-square)](https://github.com/ydipeepo/godot-motion/blob/main/LICENSE.md)
-[![@ydipeepo](https://img.shields.io/badge/@ydipeepo-1DA1F2?style=flat-square&logo=twitter&logoColor=white)](https://twitter.com/ydipeepo)
+[![MIT License](https://img.shields.io/badge/License-MIT-25B3A0?style=flat-square)](https://github.com/folt-a/godot-motion/blob/main/LICENSE.md)
+
+<br />
+
+# Nesinkrona (for Godot 4)
+
+Godot 4 の await 足回りを強化するアドオン。[Async Helper](https://github.com/ydipeepo/godot-async-helper) (Godot 3) の Godot 4 移植版です。
+
+<br />
+
+* シグナルやコルーチンが入り組むコードの見通しを良くし、自然に書けるようにします (JS の Promise や C# の Task に近いです)
+* 実装が単純なので高速です
+* await 外からキャンセルすることができます (外部から中断させることができる)
+* yield によるイテレーションを再現するパターンを含みます (実験的)
+
+---
 
 <br />
 
@@ -44,19 +61,6 @@ await another_async.wait(cancel)
 
 <br />
 
-# Nesinkrona (for Godot 4 β1, 2)
-
-Godot 4 の await 足回りを強化するアドオン。[Async Helper](https://github.com/ydipeepo/godot-async-helper) (Godot 3) の Godot 4 移植版です。
-
-<br />
-
-* シグナルやコルーチンが入り組むコードの見通しを良くし、自然に書けるようにします (JS の Promise や C# の Task に近いです)
-* 実装が単純なので高速です
-* await 外からキャンセルすることができます (外部から中断させることができる)
-* yield によるイテレーションを再現するパターンを含みます (実験的)
-
-<br />
-
 ---
 
 <br />
@@ -78,7 +82,7 @@ Godot 4 の await 足回りを強化するアドオン。[Async Helper](https://
 
 <br />
 
-Async クラス詳細はこちら: [📖 Wiki](https://github.com/ydipeepo/godot-nesink/wiki/Async)
+Async クラス詳細はこちら: [📖 Wiki](https://github.com/folt-a/godot-nesink/wiki/Async)
 
 <br />
 

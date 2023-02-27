@@ -1,11 +1,28 @@
-[English](https://github.com/ydipeepo/godot-nesink/blob/main/README.md) | [日本語](https://github.com/ydipeepo/godot-nesink/blob/main/README_ja.md) | 简体中文
+Original repository is [https://github.com/ydipeepo/godot-nesink](https://github.com/ydipeepo/godot-nesink) **(Archived)**
+
+
+[English](https://github.com/folt-a/godot-nesink/blob/main/README.md) | [日本語](https://github.com/folt-a/godot-nesink/blob/main/README_ja.md) | 简体中文
 
 <br />
 
-[![MIT License](https://img.shields.io/badge/License-MIT-25B3A0?style=flat-square)](https://github.com/ydipeepo/godot-motion/blob/main/LICENSE.md)
-[![@ydipeepo](https://img.shields.io/badge/@ydipeepo-1DA1F2?style=flat-square&logo=twitter&logoColor=white)](https://twitter.com/ydipeepo)
+[![MIT License](https://img.shields.io/badge/License-MIT-25B3A0?style=flat-square)](https://github.com/folt-a/godot-motion/blob/main/LICENSE.md)
 
 <br />
+
+# Nesinkrona (for Godot 4)
+
+一个增强 GDScript 2.0 await 的插件。
+
+<br />
+
+* 它提高了与信号和程序交织在一起的代码的可读性和自然度。(类似于 JS 的 Promise 或 C# 的 Task)
+* 由于代码简单，所以速度快。
+* 可以从外部取消 await。
+* 包含 yield 重现迭代的类型。(实验的)
+
+<br />
+
+---
 
 ```GDScript
 # 多个 Async 或信号 (Signal) 或 Coroutine 会组合成一个新的 Async
@@ -42,19 +59,6 @@ await another_async.wait(cancel)
 
 <br />
 
-# Nesinkrona (for Godot 4 β1, 2)
-
-一个增强 GDScript 2.0 await 的插件。
-
-<br />
-
-* 它提高了与信号和程序交织在一起的代码的可读性和自然度。(类似于 JS 的 Promise 或 C# 的 Task)
-* 由于代码简单，所以速度快。
-* 可以从外部取消 await。
-* 包含 yield 重现迭代的类型。(实验的)
-
-<br />
-
 ---
 
 <br />
@@ -78,7 +82,7 @@ await another_async.wait(cancel)
 
 <br />
 
-还有细节: [📖 维基 (Google Translated)](https://github-com.translate.goog/ydipeepo/godot-nesink/wiki/Async?_x_tr_sl=auto&_x_tr_tl=zh-cn)
+还有细节: [📖 维基 (Google Translated)](https://github-com.translate.goog/folt-a/godot-nesink/wiki/Async?_x_tr_sl=auto&_x_tr_tl=zh-cn)
 
 <br />
 

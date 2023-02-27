@@ -62,7 +62,7 @@ func _ready():
 		await a3_4.wait()
 		test.is_true(a3_4.is_canceled)
 
-		var s4 := AsyncIterator.from(func(yield_: Callable) -> void:
+		var s4 := AsyncIterator.from(func(yield_: Callable) -> String:
 			await Async.wait_delay(0.15)
 			return "abcd"
 		)

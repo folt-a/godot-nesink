@@ -6,6 +6,7 @@ var _pending := true
 
 func _init(coroutine: Callable) -> void:
 	assert(coroutine != null)
+	super._init()
 	_init_gate(coroutine)
 
 func _init_gate(coroutine: Callable) -> void:

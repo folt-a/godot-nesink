@@ -9,6 +9,7 @@ func _init(
 	drain_cancel: Cancel) -> void:
 
 	assert(drains != null and 0 < len(drains))
+	super._init()
 
 	var drain_count := len(drains)
 

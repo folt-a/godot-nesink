@@ -10,6 +10,8 @@ func _init(
 
 	assert(drains != null and 0 < len(drains))
 
+	super._init()
+
 	var drain_count := len(drains)
 	var result := []
 	result.resize(drain_count)
