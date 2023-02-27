@@ -1,6 +1,6 @@
 ## [b](アドオン内もしくは実装内でのみ使用)[/b]
 ## 待機可能な単位を表すインターフェイスです。
-class_name NesinkronaAwaitable
+class_name NesinkronaAwaitable extends RefCounted
 
 #-------------------------------------------------------------------------------
 # 定数
