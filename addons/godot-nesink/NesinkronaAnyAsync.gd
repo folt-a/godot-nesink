@@ -11,6 +11,8 @@ func _init(
 	assert(drains != null and 0 < len(drains))
 	assert(drain_cancel == null or not drain_cancel.is_requested)
 
+	super._init()
+
 	var drain_count := len(drains)
 
 	#

@@ -9,6 +9,7 @@ func _init(
 
 	assert(0 < depth)
 	assert(drain_cancel == null or not drain_cancel.is_requested)
+	super._init()
 	_init_flight(
 		drain,
 		drain_cancel,

@@ -19,6 +19,8 @@ func _init(
 	assert(object != null)
 	assert(signal_argc <= MAX_SIGNAL_ARGC)
 
+	super._init()
+
 	_object = object
 	_signal_name = signal_name
 

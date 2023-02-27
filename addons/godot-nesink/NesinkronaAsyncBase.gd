@@ -3,6 +3,8 @@ class_name NesinkronaAsyncBase extends Async
 #---------------------------------------------------------------------------------------------------
 # メソッド
 #---------------------------------------------------------------------------------------------------
+func _init():
+	reference()
 
 func get_state() -> int:
 	return _state
@@ -25,6 +27,7 @@ func complete_release(result) -> void:
 		STATE_PENDING_WITH_WAITERS:
 			_result = result
 			_state = STATE_COMPLETED
+			unreference()
 			_release.emit()
 
 func cancel_release() -> void:
@@ -33,6 +36,7 @@ func cancel_release() -> void:
 			_state = STATE_CANCELED
 		STATE_PENDING_WITH_WAITERS:
 			_state = STATE_CANCELED
+			unreference()
 			_release.emit()
 
 # https://github.com/ydipeepo/godot-nesink/issues/4

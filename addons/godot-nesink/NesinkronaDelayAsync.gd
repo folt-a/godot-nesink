@@ -12,6 +12,7 @@ var _timeout: float
 
 func _init(timeout: float) -> void:
 	assert(MIN_TIMEOUT <= timeout)
+	super._init()
 	_timeout = timeout
 	NesinkronaCanon.create_timer(timeout).timeout.connect(_on_timeout)
 

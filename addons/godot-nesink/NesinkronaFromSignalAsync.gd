@@ -16,6 +16,8 @@ func _init(
 
 	assert(signal_argc <= MAX_SIGNAL_ARGC)
 
+	super._init()
+
 	# https://github.com/ydipeepo/godot-nesink/issues/8
 	# @folt-a さんから報告頂いた嵌りパターン
 	# Async.from_signal(get_tree().create_timer(1.0).timeout) みたくやると
