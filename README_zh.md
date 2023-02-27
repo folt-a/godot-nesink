@@ -1,9 +1,14 @@
-[English](https://github.com/ydipeepo/godot-nesink/blob/main/README.md) | [日本語](https://github.com/ydipeepo/godot-nesink/blob/main/README_ja.md) | 简体中文
+**[WIP] This repo does not work with the latest Godot4 RC.**
+
+---
+
+This original repository is [https://github.com/ydipeepo/godot-nesink](https://github.com/ydipeepo/godot-nesink) **(Archived)**
+
+[English](https://github.com/folt-a/godot-nesink/blob/main/README.md) | [日本語](https://github.com/folt-a/godot-nesink/blob/main/README_ja.md) | 简体中文
 
 <br />
 
-[![MIT License](https://img.shields.io/badge/License-MIT-25B3A0?style=flat-square)](https://github.com/ydipeepo/godot-motion/blob/main/LICENSE.md)
-[![@ydipeepo](https://img.shields.io/badge/@ydipeepo-1DA1F2?style=flat-square&logo=twitter&logoColor=white)](https://twitter.com/ydipeepo)
+[![MIT License](https://img.shields.io/badge/License-MIT-25B3A0?style=flat-square)](https://github.com/folt-a/godot-motion/blob/main/LICENSE.md)
 
 <br />
 
@@ -42,7 +47,7 @@ await another_async.wait(cancel)
 
 <br />
 
-# Nesinkrona (for Godot 4 β1, 2)
+# Nesinkrona (for Godot 4)
 
 一个增强 GDScript 2.0 await 的插件。
 
@@ -78,7 +83,7 @@ await another_async.wait(cancel)
 
 <br />
 
-还有细节: [📖 维基 (Google Translated)](https://github-com.translate.goog/ydipeepo/godot-nesink/wiki/Async?_x_tr_sl=auto&_x_tr_tl=zh-cn)
+还有细节: [📖 维基 (Google Translated)](https://github-com.translate.goog/folt-a/godot-nesink/wiki/Async?_x_tr_sl=auto&_x_tr_tl=zh-cn)
 
 <br />
 
