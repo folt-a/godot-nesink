@@ -39,7 +39,7 @@ func cancel_release() -> void:
 			unreference()
 			_release.emit()
 
-# https://github.com/ydipeepo/godot-nesink/issues/4
+# https://github.com/folt-a/godot-nesink/issues/4
 static func normalize_drain(drain):
 	if drain is Array:
 		match len(drain):

@@ -1,6 +1,3 @@
-Original repository is [https://github.com/ydipeepo/godot-nesink](https://github.com/ydipeepo/godot-nesink) **(Archived)**
-
-
 [English](https://github.com/folt-a/godot-nesink/blob/main/README.md) | [日本語](https://github.com/folt-a/godot-nesink/blob/main/README_ja.md) | 简体中文
 
 <br />
@@ -93,3 +90,7 @@ await another_async.wait(cancel)
 ## 贡献
 
 我们非常欢迎提供 bug 的修复、文档翻译，和任何其他改进! 谢谢!
+
+## Original repository
+
+This repository was transfer from [ydipeepo](https://github.com/ydipeepo)

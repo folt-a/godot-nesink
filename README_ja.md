@@ -1,6 +1,3 @@
-Original repository is [https://github.com/ydipeepo/godot-nesink](https://github.com/ydipeepo/godot-nesink) **(Archived)**
-
-
 [English](https://github.com/folt-a/godot-nesink/blob/main/README.md) | 日本語 | [简体中文](https://github.com/folt-a/godot-nesink/blob/main/README_zh.md)
 
 <br />
@@ -93,3 +90,9 @@ Async クラス詳細はこちら: [📖 Wiki](https://github.com/folt-a/godot-n
 ## バグの報告や要望など
 
 バグの修正や報告、ドキュメント翻訳、およびその他の改善など歓迎いたします。
+
+## 元リポジトリ
+
+このリポジトリは、[ydipeepo](https://github.com/ydipeepo) さんから転送されたものです。
+
+ありがとうございます……!

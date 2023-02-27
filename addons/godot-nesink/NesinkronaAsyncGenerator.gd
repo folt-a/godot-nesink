@@ -55,7 +55,7 @@ func _yield(result = null) -> Async:
 		var set_result: Callable = _set_result_queue.pop_front()
 		yield_async = set_result.call(result)
 
-	# https://github.com/ydipeepo/godot-nesink/issues/3
+	# https://github.com/folt-a/godot-nesink/issues/3
 	# コンストラクタが完走する前にここへ到達する可能性があるため、
 	# _runner == null の条件を追加した。
 	elif _runner == null or _runner.is_pending:
