@@ -28,7 +28,7 @@ func _ready():
 		test.is_null(await s1.wait())
 		test.is_true(s1.is_completed)
 
-		var s3 := AsyncGenerator.from(func(yield_: Callable) -> void:
+		var s3 := AsyncGenerator.from(func(yield_: Callable) -> int:
 			await Async.wait_delay(0.15)
 			test.expect("a", await yield_.call(1).wait())
 			await Async.wait_delay(0.15)
