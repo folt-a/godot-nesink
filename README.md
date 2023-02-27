@@ -4,7 +4,8 @@
 
 ---
 
-This original repository is [https://github.com/ydipeepo/godot-nesink](https://github.com/ydipeepo/godot-nesink) **(Archived)**
+Original repository is [https://github.com/ydipeepo/godot-nesink](https://github.com/ydipeepo/godot-nesink) **(Archived)**
+
 
 English | [日本語](https://github.com/folt-a/godot-nesink/blob/main/README_ja.md) | [简体中文](https://github.com/folt-a/godot-nesink/blob/main/README_zh.md)
 
@@ -13,6 +14,21 @@ English | [日本語](https://github.com/folt-a/godot-nesink/blob/main/README_ja
 [![MIT License](https://img.shields.io/badge/License-MIT-25B3A0?style=flat-square)](https://github.com/folt-a/godot-nesink/blob/main/LICENSE.md)
 
 <br />
+
+# Nesinkrona (for Godot 4)
+
+An addon to enhance the awaitability of GDScript 2.0.
+
+<br />
+
+* It improves the readability and naturalness of code that is intermingled with signals and coroutines. (similar to Promise in JS or Task in C#).
+* Fast due to simple implementation.
+* Can be canceled from outside of await.
+* Contains patterns that reproduce iterations with yield. (experimental)
+
+<br />
+
+---
 
 ```GDScript
 # Multiple Async or Signal or Coroutine can be combined into a new Async
@@ -46,23 +62,6 @@ var another_async = async.then(func(prev_result):
 var cancel := Cancel.new()
 await another_async.wait(cancel)
 ```
-
-<br />
-
-# Nesinkrona (for Godot 4)
-
-An addon to enhance the awaitability of GDScript 2.0.
-
-<br />
-
-* It improves the readability and naturalness of code that is intermingled with signals and coroutines. (similar to Promise in JS or Task in C#).
-* Fast due to simple implementation.
-* Can be canceled from outside of await.
-* Contains patterns that reproduce iterations with yield. (experimental)
-
-<br />
-
----
 
 <br />
 
@@ -100,6 +99,8 @@ We are grateful to the community for contributing bug fixes, documentation, tran
 
 
 ## Original repository's README
+
+ありがとうございます……!
 
 ---
 
