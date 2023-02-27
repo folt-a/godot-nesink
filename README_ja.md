@@ -1,7 +1,3 @@
-**[WIP] This repo does not work with the latest Godot4 RC.**
-
----
-
 Original repository is [https://github.com/ydipeepo/godot-nesink](https://github.com/ydipeepo/godot-nesink) **(Archived)**
 
 
