@@ -1,0 +1,276 @@
+[gd_scene load_steps=2 format=3 uid="uid://63dkar7hk0f8"]
+
+[ext_resource type="Script" path="res://Test_Task.gd" id="1_6j14v"]
+
+[node name="Test_Async" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_6j14v")
+
+[node name="Title" type="Label" parent="."]
+layout_mode = 0
+offset_left = 64.0
+offset_top = 48.0
+offset_right = 576.0
+offset_bottom = 96.0
+theme_override_font_sizes/font_size = 24
+text = "Nesinkrona"
+vertical_alignment = 1
+metadata/_edit_lock_ = true
+
+[node name="Description" type="Label" parent="."]
+layout_mode = 0
+offset_left = 64.0
+offset_top = 96.0
+offset_right = 576.0
+offset_bottom = 128.0
+theme_override_colors/font_color = Color(0.733333, 0.733333, 0.733333, 1)
+theme_override_font_sizes/font_size = 12
+text = "Pseudo (task based) asynchronous patterns for Godot 4."
+vertical_alignment = 1
+metadata/_edit_lock_ = true
+
+[node name="Features" type="HBoxContainer" parent="."]
+auto_translate_mode = 2
+layout_mode = 0
+offset_left = 64.0
+offset_top = 192.0
+offset_right = 1216.0
+offset_bottom = 576.0
+localize_numeral_system = false
+theme_override_constants/separation = 0
+metadata/_edit_group_ = true
+
+[node name="Version_1_0_1" type="VBoxContainer" parent="Features"]
+custom_minimum_size = Vector2(256, 0)
+layout_mode = 2
+theme_override_constants/separation = 0
+metadata/_edit_group_ = true
+
+[node name="Header" type="Label" parent="Features/Version_1_0_1"]
+custom_minimum_size = Vector2(0, 32)
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+text = "1.0.1 features:"
+vertical_alignment = 1
+
+[node name="Completed" type="CheckBox" parent="Features/Version_1_0_1"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 24)
+layout_mode = 2
+focus_mode = 0
+mouse_filter = 2
+theme_override_colors/font_disabled_color = Color(0.8, 0.8, 0.8, 1)
+theme_override_font_sizes/font_size = 10
+disabled = true
+button_mask = 0
+text = "Async.completed()"
+
+[node name="Canceled" type="CheckBox" parent="Features/Version_1_0_1"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 24)
+layout_mode = 2
+focus_mode = 0
+mouse_filter = 2
+theme_override_colors/font_disabled_color = Color(0.8, 0.8, 0.8, 1)
+theme_override_font_sizes/font_size = 10
+disabled = true
+button_mask = 0
+text = "Async.canceled()"
+
+[node name="From" type="CheckBox" parent="Features/Version_1_0_1"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 24)
+layout_mode = 2
+focus_mode = 0
+mouse_filter = 2
+theme_override_colors/font_disabled_color = Color(0.8, 0.8, 0.8, 1)
+theme_override_font_sizes/font_size = 10
+disabled = true
+button_mask = 0
+text = "Async.from()"
+
+[node name="FromSignal" type="CheckBox" parent="Features/Version_1_0_1"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 24)
+layout_mode = 2
+focus_mode = 0
+mouse_filter = 2
+theme_override_colors/font_disabled_color = Color(0.8, 0.8, 0.8, 1)
+theme_override_font_sizes/font_size = 10
+disabled = true
+button_mask = 0
+text = "Async.from_signal()"
+
+[node name="FromSignalName" type="CheckBox" parent="Features/Version_1_0_1"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 24)
+layout_mode = 2
+focus_mode = 0
+mouse_filter = 2
+theme_override_colors/font_disabled_color = Color(0.8, 0.8, 0.8, 1)
+theme_override_font_sizes/font_size = 10
+disabled = true
+button_mask = 0
+text = "Async.from_signal_name()"
+
+[node name="Delay" type="CheckBox" parent="Features/Version_1_0_1"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 24)
+layout_mode = 2
+focus_mode = 0
+mouse_filter = 2
+theme_override_colors/font_disabled_color = Color(0.8, 0.8, 0.8, 1)
+theme_override_font_sizes/font_size = 10
+disabled = true
+button_mask = 0
+text = "Async.delay()"
+
+[node name="DelayMsec" type="CheckBox" parent="Features/Version_1_0_1"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 24)
+layout_mode = 2
+focus_mode = 0
+mouse_filter = 2
+theme_override_colors/font_disabled_color = Color(0.8, 0.8, 0.8, 1)
+theme_override_font_sizes/font_size = 10
+disabled = true
+button_mask = 0
+text = "Async.delay_msec()"
+
+[node name="DelayUsec" type="CheckBox" parent="Features/Version_1_0_1"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 24)
+layout_mode = 2
+focus_mode = 0
+mouse_filter = 2
+theme_override_colors/font_disabled_color = Color(0.8, 0.8, 0.8, 1)
+theme_override_font_sizes/font_size = 10
+disabled = true
+button_mask = 0
+text = "Async.delay_usec()"
+
+[node name="All" type="CheckBox" parent="Features/Version_1_0_1"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 24)
+layout_mode = 2
+focus_mode = 0
+mouse_filter = 2
+theme_override_colors/font_disabled_color = Color(0.8, 0.8, 0.8, 1)
+theme_override_font_sizes/font_size = 10
+disabled = true
+button_mask = 0
+text = "Async.all()"
+
+[node name="AllSettled" type="CheckBox" parent="Features/Version_1_0_1"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 24)
+layout_mode = 2
+focus_mode = 0
+mouse_filter = 2
+theme_override_colors/font_disabled_color = Color(0.8, 0.8, 0.8, 1)
+theme_override_font_sizes/font_size = 10
+disabled = true
+button_mask = 0
+text = "Async.all_settled()"
+
+[node name="Any" type="CheckBox" parent="Features/Version_1_0_1"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 24)
+layout_mode = 2
+focus_mode = 0
+mouse_filter = 2
+theme_override_colors/font_disabled_color = Color(0.8, 0.8, 0.8, 1)
+theme_override_font_sizes/font_size = 10
+disabled = true
+button_mask = 0
+text = "Async.any()"
+
+[node name="Race" type="CheckBox" parent="Features/Version_1_0_1"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 24)
+layout_mode = 2
+focus_mode = 0
+mouse_filter = 2
+theme_override_colors/font_disabled_color = Color(0.8, 0.8, 0.8, 1)
+theme_override_font_sizes/font_size = 10
+disabled = true
+button_mask = 0
+text = "Async.race()"
+
+[node name="Then" type="CheckBox" parent="Features/Version_1_0_1"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 24)
+layout_mode = 2
+focus_mode = 0
+mouse_filter = 2
+theme_override_colors/font_disabled_color = Color(0.8, 0.8, 0.8, 1)
+theme_override_font_sizes/font_size = 10
+disabled = true
+button_mask = 0
+text = "Async.then()"
+
+[node name="Unwrap" type="CheckBox" parent="Features/Version_1_0_1"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 24)
+layout_mode = 2
+focus_mode = 0
+mouse_filter = 2
+theme_override_colors/font_disabled_color = Color(0.8, 0.8, 0.8, 1)
+theme_override_font_sizes/font_size = 10
+disabled = true
+button_mask = 0
+text = "Async.unwrap()"
+
+[node name="Version_1_0_2" type="VBoxContainer" parent="Features"]
+custom_minimum_size = Vector2(256, 0)
+layout_mode = 2
+theme_override_constants/separation = 0
+metadata/_edit_group_ = true
+
+[node name="Header" type="Label" parent="Features/Version_1_0_2"]
+custom_minimum_size = Vector2(0, 32)
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+text = "1.6.0 features:"
+vertical_alignment = 1
+
+[node name="Defer" type="CheckBox" parent="Features/Version_1_0_2"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 24)
+layout_mode = 2
+focus_mode = 0
+mouse_filter = 2
+theme_override_colors/font_disabled_color = Color(0.8, 0.8, 0.8, 1)
+theme_override_font_sizes/font_size = 10
+disabled = true
+button_mask = 0
+text = "Async.defer()"
+
+[node name="FromConditionalSignal" type="CheckBox" parent="Features/Version_1_0_2"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 24)
+layout_mode = 2
+focus_mode = 0
+mouse_filter = 2
+theme_override_colors/font_disabled_color = Color(0.8, 0.8, 0.8, 1)
+theme_override_font_sizes/font_size = 10
+disabled = true
+button_mask = 0
+text = "Async.from_conditional()"
+
+[node name="FromConditionalSignalName" type="CheckBox" parent="Features/Version_1_0_2"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 24)
+layout_mode = 2
+focus_mode = 0
+mouse_filter = 2
+theme_override_colors/font_disabled_color = Color(0.8, 0.8, 0.8, 1)
+theme_override_font_sizes/font_size = 10
+disabled = true
+button_mask = 0
+text = "Async.from_conditional_signal_name()"

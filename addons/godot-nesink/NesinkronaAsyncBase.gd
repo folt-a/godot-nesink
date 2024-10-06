@@ -3,8 +3,11 @@ class_name NesinkronaAsyncBase extends Async
 #---------------------------------------------------------------------------------------------------
 # メソッド
 #---------------------------------------------------------------------------------------------------
-func _init():
-	reference()
+
+static func get_tree() -> SceneTree:
+	if _tree == null:
+		_tree = Engine.get_main_loop()
+	return _tree
 
 func get_state() -> int:
 	return _state
@@ -19,7 +22,7 @@ func wait(cancel: Cancel = null):
 			await _wait()
 	return _result
 
-func complete_release(result) -> void:
+func complete_release(result: Variant) -> void:
 	match _state:
 		STATE_PENDING:
 			_result = result
@@ -27,7 +30,6 @@ func complete_release(result) -> void:
 		STATE_PENDING_WITH_WAITERS:
 			_result = result
 			_state = STATE_COMPLETED
-			unreference()
 			_release.emit()
 
 func cancel_release() -> void:
@@ -36,7 +38,6 @@ func cancel_release() -> void:
 			_state = STATE_CANCELED
 		STATE_PENDING_WITH_WAITERS:
 			_state = STATE_CANCELED
-			unreference()
 			_release.emit()
 
 # https://github.com/folt-a/godot-nesink/issues/4
@@ -72,6 +73,8 @@ static func normalize_drain(drain):
 
 signal _release
 
+static var _tree: SceneTree
+
 var _state := STATE_PENDING
 var _result
 
@@ -81,6 +84,7 @@ func _wait() -> void:
 
 func _wait_with_cancel(cancel: Cancel) -> void:
 	assert(_state == STATE_PENDING_WITH_WAITERS)
+
 	if cancel.is_requested:
 		cancel_release()
 		return

@@ -5,41 +5,36 @@ class_name NesinkronaThenCallbackAsync extends NesinkronaAsyncBase
 var _pending := true
 
 func _init(
-	drain: NesinkronaAwaitable,
+	drain: Async,
 	drain_cancel: Cancel,
-	coroutine: Callable) -> void:
+	coroutine: Callable,
+	unbind_cancel: bool) -> void:
 
 	assert(drain != null)
-	assert(coroutine != null)
-	super._init()
-	_init_gate(
-		drain,
-		drain_cancel,
-		coroutine)
 
-func _init_gate(
-	drain: NesinkronaAwaitable,
-	drain_cancel: Cancel,
-	coroutine: Callable) -> void:
+	if unbind_cancel:
+		coroutine = coroutine.unbind(1)
+	_init_core(drain, drain_cancel, coroutine)
 
-	var drain_result = await drain.wait(drain_cancel)
+func _init_core(drain: Async, drain_cancel: Cancel, coroutine: Callable) -> void:
+	var drain_result: Variant = await drain.wait(drain_cancel)
 	match drain.get_state():
 		STATE_CANCELED:
 			cancel_release()
 			_pending = true
 		STATE_COMPLETED:
 			reference()
-			await coroutine.call(drain_result, _complete_gate, _cancel_gate)
+			await coroutine.call(drain_result, _complete_core, _cancel_core)
 		_:
-			assert(false) # BUG
+			assert(false, "BUG")
 
-func _complete_gate(result = null) -> void:
+func _complete_core(result: Variant = null) -> void:
 	if _pending:
 		_pending = false
 		complete_release(result)
 		unreference()
 
-func _cancel_gate() -> void:
+func _cancel_core() -> void:
 	if _pending:
 		_pending = false
 		cancel_release()

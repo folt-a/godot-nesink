@@ -12,9 +12,9 @@ var _timeout: float
 
 func _init(timeout: float) -> void:
 	assert(MIN_TIMEOUT <= timeout)
-	super._init()
+
 	_timeout = timeout
-	NesinkronaCanon.create_timer(timeout).timeout.connect(_on_timeout)
+	get_tree().create_timer(timeout).timeout.connect(_on_timeout)
 
 func _on_timeout() -> void:
 	complete_release(_timeout)

@@ -4,41 +4,28 @@ class_name NesinkronaAllAsync extends NesinkronaAsyncBase
 
 var _pending_drains: int
 
-func _init(
-	drains: Array,
-	drain_cancel: Cancel) -> void:
+func _init(drains: Array, drain_cancel: Cancel) -> void:
+	assert(not drains.is_empty())
 
-	assert(drains != null and 0 < len(drains))
-	assert(drain_cancel == null or not drain_cancel.is_requested)
-
-	super._init()
-
-	var drain_count := len(drains)
+	var drain_count := drains.size()
 	var result := []
 	result.resize(drain_count)
 
-	#
-	# すべてのドレインが完了するまで待機します。
-	#
-	# すべてのドレインが完了した -> 結果が配列に含まれたものを設定して完了する
-	# 他 -> キャンセル
-	#
-
 	_pending_drains = drain_count
-	for drain_index in drain_count:
-		_init_gate(
+	for drain_index: int in drain_count:
+		_init_core(
 			normalize_drain(drains[drain_index]),
 			drain_cancel,
 			drain_index,
 			result)
 
-func _init_gate(
-	drain,
+func _init_core(
+	drain: Variant,
 	drain_cancel: Cancel,
 	drain_index: int,
 	result: Array) -> void:
 
-	if drain is NesinkronaAwaitable:
+	if drain is Async:
 		reference()
 		result[drain_index] = await drain.wait(drain_cancel)
 		_pending_drains -= 1
@@ -49,9 +36,8 @@ func _init_gate(
 				if _pending_drains == 0:
 					complete_release(result)
 			_:
-				assert(false) # BUG
+				assert(false, "BUG")
 		unreference()
-
 	else:
 		result[drain_index] = drain
 		_pending_drains -= 1

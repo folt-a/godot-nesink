@@ -4,44 +4,30 @@ class_name NesinkronaRaceAsync extends NesinkronaAsyncBase
 
 var _pending_drains: int
 
-func _init(
-	drains: Array,
-	drain_cancel: Cancel) -> void:
+func _init(drains: Array, drain_cancel: Cancel) -> void:
+	assert(not drains.is_empty())
 
-	assert(drains != null and 0 < len(drains))
-	super._init()
-
-	var drain_count := len(drains)
-
-	#
-	# どれか一つのドレインの待機中ではなくなるまで待機します。
-	#
-	# どれか一つのドレインが待機中ではなくなった -> 結果を Async として設定して完了する
-	#
+	var drain_count := drains.size()
 
 	_pending_drains = drain_count
-	for drain_index in drain_count:
-		_init_gate(
+	for drain_index: int in drain_count:
+		_init_core(
 			normalize_drain(drains[drain_index]),
 			drain_cancel)
 
-func _init_gate(
-	drain,
-	drain_cancel: Cancel) -> void:
-
-	if drain is NesinkronaAwaitable:
+func _init_core(drain: Variant, drain_cancel: Cancel) -> void:
+	if drain is Async:
 		reference()
-		var drain_result = await drain.wait(drain_cancel)
+		var drain_result: Variant = await drain.wait(drain_cancel)
 		_pending_drains -= 1
 		match drain.get_state():
 			STATE_CANCELED:
 				if _pending_drains == 0:
-					complete_release(NesinkronaCanon.create_canceled_async())
+					complete_release(NesinkronaCanceledAsync.new())
 			STATE_COMPLETED:
-				complete_release(NesinkronaCanon.create_completed_async(drain_result))
+				complete_release(NesinkronaCompletedAsync.new(drain_result))
 			_:
-				assert(false) # BUG
+				assert(false, "BUG")
 		unreference()
-
 	else:
-		complete_release(NesinkronaCanon.create_completed_async(drain))
+		complete_release(NesinkronaCompletedAsync.new(drain))
