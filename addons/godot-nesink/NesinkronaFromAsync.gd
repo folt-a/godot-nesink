@@ -3,11 +3,9 @@ class_name NesinkronaFromAsync extends NesinkronaAsyncBase
 #---------------------------------------------------------------------------------------------------
 
 func _init(coroutine: Callable) -> void:
-	assert(coroutine != null)
-	super._init()
-	_init_gate(coroutine)
+	_init_core(coroutine)
 
-func _init_gate(coroutine: Callable) -> void:
+func _init_core(coroutine: Callable) -> void:
 	reference()
 	complete_release(await coroutine.call())
 	unreference()

@@ -3,74 +3,73 @@
 ## 非同期的な処理を抽象化し、将来決まる結果をこの共通のインターフェイスからアクセスできるようにします。
 ## 完了もしくはキャンセルされたという状態と、完了した場合はその結果を保持し [method wait] メソッドから取得することができます。
 ## またいくつかの重要なファクトリメソッドを公開します。
-class_name Async extends NesinkronaAwaitable
+class_name Async
+
+#-------------------------------------------------------------------------------
+# 定数
+#-------------------------------------------------------------------------------
+
+enum {
+	## [b](アドオン内もしくは実装内でのみ使用)[/b]
+	## まだ完了もしくはキャンセルされておらず待機中であることを表します。
+	STATE_PENDING,
+	## [b](アドオン内もしくは実装内でのみ使用)[/b]
+	## まだ完了もしくはキャンセルされておらず待機中であり、
+	## 1 度以上 [method wait] メソッドにより待機している箇所があることを表します。
+	STATE_PENDING_WITH_WAITERS,
+	## [b](アドオン内もしくは実装内でのみ使用)[/b]
+	## 完了したことを表します。
+	STATE_COMPLETED,
+	## [b](アドオン内もしくは実装内でのみ使用)[/b]
+	## キャンセルされたことを表します。
+	STATE_CANCELED,
+}
+
+enum {
+	## アイドル時に処理されるよう遅延されることを表します。
+	DEFER_IDLE,
+	## _process フレームに処理されるよう遅延されることを表します。
+	DEFER_PROCESS_FRAME,
+	## _physics_process フレームに処理されるよう遅延されることを表します。
+	DEFER_PHYSICS_FRAME,
+}
+
+## 条件一致を省略するためのプレースホルダ。
+static var SKIP := Object.new()
+
+#-------------------------------------------------------------------------------
+# プロパティ
+#-------------------------------------------------------------------------------
+
+## この待機可能な単位が完了している場合 true を返します。[br]
+## [br]
+## [b]補足[/b][br]
+## [method wait] を待機した後は、[member is_canceled] もしくは
+## このプロパティのうちどちらかが必ず true になります。
+var is_completed: bool:
+	get:
+		return get_state() == STATE_COMPLETED
+
+## この待機可能な単位がキャンセルされている場合 true を返します。[br]
+## [br]
+## [b]補足[/b][br]
+## [method wait] を待機した後は、[member is_completed] もしくは
+## このプロパティのうちどちらかが必ず true になります。
+var is_canceled: bool:
+	get:
+		return get_state() == STATE_CANCELED
+
+## この待機可能な単位がまだ完了もしくはキャンセルされていない場合 true を返します。
+var is_pending: bool:
+	get:
+		var state := get_state()
+		return \
+			state == STATE_PENDING or \
+			state == STATE_PENDING_WITH_WAITERS
 
 #-------------------------------------------------------------------------------
 # メソッド
 #-------------------------------------------------------------------------------
-
-## この [Async] の結果が [Async] である場合、
-## 指定した回数アンラップを試みた新たな [Async] を作成します。[br]
-## [br]
-## [b]使い方[/b]
-## [codeblock]
-## var async := Async.completed(Async.completed(10)) # Async に Async がネストされている
-## print(await async.unwrap().wait()) # 10
-## [/codeblock]
-func unwrap(
-	depth := 1,
-	cancel: Cancel = null) -> Async:
-
-	assert(0 <= depth)
-	return \
-		NesinkronaCanon.create_canceled_async() \
-		if cancel and cancel.is_requested or is_canceled else \
-		self \
-		if depth == 0 else \
-		NesinkronaUnwrapAsync.new(self, cancel, depth)
-
-## この [Async] が完了した場合、
-## 指定したコルーチン (もしくは関数) の戻り値を結果として完了する新たな [Async] を作成します。[br]
-## [br]
-## 前の結果を写像する場合 ([method Array.map] 的な使い方) や、
-## 結果から別のコルーチンへ処理を渡す場合に使うことができます。[br]
-## [br]
-## [b]補足[/b][br]
-## 第 1 引数 [code]coroutine[/code] は引数を 1 つ受け取る
-## [Callable] でなくてはなりません。この引数には直前の結果が渡されます。[br]
-## [br]
-## [b]使い方[/b]
-## [codeblock]
-## var async := Async.completed(10).then(func(result): return result * result)
-## print(await async.wait()) # 100
-## [/codeblock]
-func then(
-	coroutine: Callable,
-	cancel: Cancel = null) -> Async:
-
-	assert(coroutine != null)
-	return NesinkronaThenAsync.new(self, cancel, coroutine)
-
-## この [Async] が完了した場合、
-## 指定したコルーチン (もしくは関数) を呼び出し結果を待機する新たな [Async] を作成します。[br]
-## [br]
-## [b]補足[/b][br]
-## 第 1 引数 [code]coroutine[/code] は引数を 3 つ受け取る
-## [Callable] でなくてはなりません。この引数には直前の結果、
-## 完了コールバック、キャンセルコールバックが渡されます。[br]
-## [br]
-## [b]使い方[/b]
-## [codeblock]
-## var async := Async.completed(10).then_callback(func(result, complete: Callable, cancel: Callable):
-##     complete.call(result * result))
-## print(await async.wait()) # 100
-## [/codeblock]
-func then_callback(
-	coroutine: Callable,
-	cancel: Cancel = null) -> Async:
-
-	assert(coroutine != null)
-	return NesinkronaThenCallbackAsync.new(self, cancel, coroutine)
 
 ## 完了した状態の [Async] を作成します。[br]
 ## [br]
@@ -80,8 +79,8 @@ func then_callback(
 ## assert(async.is_completed)
 ## assert(await async.wait() == "result")
 ## [/codeblock]
-static func completed(result = null) -> Async:
-	return NesinkronaCanon.create_completed_async(result)
+static func completed(result: Variant = null) -> Async:
+	return NesinkronaCompletedAsync.new(result)
 
 ## キャンセルされた状態の [Async] を作成します。[br]
 ## [br]
@@ -92,7 +91,7 @@ static func completed(result = null) -> Async:
 ## assert(await async.wait() == null)
 ## [/codeblock]
 static func canceled() -> Async:
-	return NesinkronaCanon.create_canceled_async()
+	return NesinkronaCanceledAsync.new()
 
 ## コルーチン (もしくは関数) の戻り値を結果として完了する [Async] を作成します。[br]
 ## [br]
@@ -110,7 +109,6 @@ static func canceled() -> Async:
 ## print(await async2.wait()) # 123
 ## [/codeblock]
 static func from(coroutine: Callable) -> Async:
-	assert(coroutine != null)
 	return NesinkronaFromAsync.new(coroutine)
 
 ## コルーチン (もしくは関数) を呼び出し結果を待機する新たな [Async] を作成します。[br]
@@ -129,9 +127,8 @@ static func from(coroutine: Callable) -> Async:
 ## print(await async1.wait()) # <null>
 ## print(await async2.wait()) # 123
 ## [/codeblock]
-static func from_callback(coroutine: Callable) -> Async:
-	assert(coroutine != null)
-	return NesinkronaFromCallbackAsync.new(coroutine)
+static func from_callback(coroutine: Callable, unbind_cancel := false) -> Async:
+	return NesinkronaFromCallbackAsync.new(coroutine, unbind_cancel)
 
 ## シグナルを受信するとその引数を結果として完了する [Async] を作成します。[br]
 ## [br]
@@ -158,12 +155,11 @@ static func from_callback(coroutine: Callable) -> Async:
 ## my_event_1.emit(1)    # 同上
 ## my_event_2.emit(1, 2) # 同上
 ## [/codeblock]
-static func from_signal(
-	signal_: Signal,
-	signal_argc := 0) -> Async:
-
+static func from_signal(signal_: Signal, signal_argc := 0) -> Async:
 	assert(not signal_.is_null())
-	assert(0 <= signal_argc and signal_argc <= NesinkronaFromSignalAsync.MAX_SIGNAL_ARGC)
+	assert(
+		signal_argc >= 0 and
+		signal_argc <= NesinkronaFromSignalAsync.MAX_SIGNAL_ARGC)
 	return NesinkronaFromSignalAsync.new(signal_, signal_argc)
 
 ## 文字列によりシグナル名を指定し、そのシグナルを受信すると引数を結果として完了する [Async] を作成します。[br]
@@ -175,12 +171,51 @@ static func from_signal_name(
 	signal_name: StringName,
 	signal_argc := 0) -> Async:
 
-	assert(object != null and not object.is_queued_for_deletion())
-	assert(0 <= signal_argc and signal_argc <= NesinkronaFromSignalNameAsync.MAX_SIGNAL_ARGC)
-	return NesinkronaFromSignalNameAsync.new(
-		object,
-		signal_name,
-		signal_argc)
+	assert(
+		object != null and
+		not object.is_queued_for_deletion())
+	assert(
+		signal_argc >= 0 and
+		signal_argc <= NesinkronaFromSignalNameAsync.MAX_SIGNAL_ARGC)
+	return NesinkronaFromSignalNameAsync.new(object, signal_name, signal_argc)
+
+## シグナル引数が一致した場合にのみ完了する条件付き [Async] を作成します。[br]
+## [br]
+## [method Async.wait] はシグナル引数を配列に格納したものを返します。
+static func from_conditional_signal(
+	signal_: Signal,
+	signal_args := []) -> Async:
+
+	assert(not signal_.is_null())
+	assert(
+		signal_args.size() <= NesinkronaFromConditionalSignalAsync.MAX_SIGNAL_ARGC)
+	return NesinkronaFromConditionalSignalAsync.new(signal_, signal_args)
+
+## シグナル引数が一致した場合にのみ完了する条件付き [Async] を作成します。[br]
+## [br]
+## [method Async.wait] はシグナル引数を配列に格納したものを返します。
+static func from_conditional_signal_name(
+	object: Object,
+	signal_name: StringName,
+	signal_args := []) -> Async:
+
+	assert(object and not object.is_queued_for_deletion())
+	assert(
+		signal_args.size() <= NesinkronaFromConditionalSignalNameAsync.MAX_SIGNAL_ARGC)
+	return NesinkronaFromConditionalSignalNameAsync.new(object, signal_name, signal_args)
+
+## [param callsite] で指定したタイミングで完了する [Async] を作成します。
+static func defer(callsite := DEFER_IDLE) -> Async:
+	match callsite:
+		DEFER_IDLE:
+			return NesinkronaDeferIdleAsync.new()
+		DEFER_PROCESS_FRAME:
+			return NesinkronaDeferProcessFrameAsync.new()
+		DEFER_PHYSICS_FRAME:
+			return NesinkronaDeferPhysicsFrameAsync.new()
+		_:
+			assert(false)
+			return null
 
 ## タイムアウトすると完了する [Async] を作成します。[br]
 ## [br]
@@ -198,7 +233,7 @@ static func from_signal_name(
 static func delay(timeout: float) -> Async:
 	assert(NesinkronaDelayAsync.MIN_TIMEOUT <= timeout)
 	return \
-		NesinkronaCanon.create_completed_async(0.0) \
+		completed(0.0) \
 		if timeout == 0.0 else \
 		NesinkronaDelayAsync.new(timeout)
 
@@ -237,15 +272,12 @@ static func delay_usec(timeout: float) -> Async:
 ## )
 ## print(await async.wait()) # [1234, 1.5, 2.0, true, "aaa"]
 ## [/codeblock]
-static func all(
-	drains: Array,
-	cancel: Cancel = null) -> Async:
-
+static func all(drains: Array, cancel: Cancel = null) -> Async:
 	return \
-		NesinkronaCanon.create_canceled_async() \
+		canceled() \
 		if cancel and cancel.is_requested else \
-		NesinkronaCanon.create_completed_async([]) \
-		if drains == null or 0 == len(drains) else \
+		completed([]) \
+		if drains.is_empty() else \
 		NesinkronaAllAsync.new(drains, cancel)
 
 ## すべての入力が完了もしくはキャンセルされると、それぞれの結果を [Async] のまま配列に格納したものを結果として完了する [Async] を作成します。[br]
@@ -270,13 +302,10 @@ static func all(
 ## print(await async_result[2].wait()) # 10
 ## print(await async_result[3].wait()) # 20
 ## [/codeblock]
-static func all_settled(
-	drains: Array,
-	cancel: Cancel = null) -> Async:
-
+static func all_settled(drains: Array, cancel: Cancel = null) -> Async:
 	return \
-		NesinkronaCanon.create_completed_async([]) \
-		if drains == null or 0 == len(drains) else \
+		completed([]) \
+		if drains.is_empty() else \
 		NesinkronaAllSettledAsync.new(drains, cancel)
 
 ## すべての入力のうちどれか 1 つが完了すると、それを結果として完了する新たな [Async] を作成します。[br]
@@ -296,13 +325,10 @@ static func all_settled(
 ## ])
 ## print(await async.wait()) # 2.0
 ## [/codeblock]
-static func any(
-	drains: Array,
-	cancel: Cancel = null) -> Async:
-
+static func any(drains: Array, cancel: Cancel = null) -> Async:
 	return \
-		NesinkronaCanon.create_canceled_async() \
-		if cancel and cancel.is_requested or drains == null or 0 == len(drains) else \
+		canceled() \
+		if cancel != null and cancel.is_requested or drains.is_empty() else \
 		NesinkronaAnyAsync.new(drains, cancel)
 
 ## すべての入力のうちどれか 1 つが完了もしくはキャンセルされると、それを結果として完了する新たな [Async] を作成します。[br]
@@ -322,12 +348,19 @@ static func any(
 ## async = await async.wait()
 ## print(async.is_canceled) # true
 ## [/codeblock]
-static func race(
-	drains: Array,
-	cancel: Cancel = null) -> Async:
-
-	assert(drains != null and 0 < len(drains))
+static func race(drains: Array, cancel: Cancel = null) -> Async:
+	assert(not drains.is_empty())
 	return NesinkronaRaceAsync.new(drains, cancel)
+
+## [param callsite] で指定したタイミングを待機します。[br]
+## [br]
+## [b]補足[/b][br]
+## 以下と同じです:
+## [codeblock]
+## defer(callsite).wait(cancel)
+## [/codeblock]
+static func wait_defer(callsite := DEFER_IDLE, cancel: Cancel = null) -> Variant:
+	return await defer(callsite).wait(cancel)
 
 ## [method delay] で作成した [Async] に対して [method wait] を呼び出す短縮表記です。[br]
 ## [br]
@@ -336,10 +369,7 @@ static func race(
 ## [codeblock]
 ## delay(timeout).wait(cancel)
 ## [/codeblock]
-static func wait_delay(
-	timeout: float,
-	cancel: Cancel = null):
-
+static func wait_delay(timeout: float, cancel: Cancel = null) -> Variant:
 	return await delay(timeout).wait(cancel)
 
 ## [method delay_msec] で作成した [Async] に対して [method wait] を呼び出す短縮表記です。[br]
@@ -349,10 +379,7 @@ static func wait_delay(
 ## [codeblock]
 ## delay_msec(timeout).wait(cancel)
 ## [/codeblock]
-static func wait_delay_msec(
-	timeout: float,
-	cancel: Cancel = null):
-
+static func wait_delay_msec(timeout: float, cancel: Cancel = null) -> Variant:
 	return await delay_msec(timeout).wait(cancel)
 
 ## [method delay_usec] で作成した [Async] に対して [method wait] を呼び出す短縮表記です。[br]
@@ -362,10 +389,7 @@ static func wait_delay_msec(
 ## [codeblock]
 ## delay_usec(timeout).wait(cancel)
 ## [/codeblock]
-static func wait_delay_usec(
-	timeout: float,
-	cancel: Cancel = null):
-
+static func wait_delay_usec(timeout: float, cancel: Cancel = null) -> Variant:
 	return await delay_usec(timeout).wait(cancel)
 
 ## [method all] で作成した [Async] に対して [method wait] を呼び出す短縮表記です。[br]
@@ -375,10 +399,7 @@ static func wait_delay_usec(
 ## [codeblock]
 ## all(drains, cancel).wait(cancel)
 ## [/codeblock]
-static func wait_all(
-	drains: Array,
-	cancel: Cancel = null):
-
+static func wait_all(drains: Array, cancel: Cancel = null) -> Variant:
 	return await all(drains, cancel).wait(cancel)
 
 ## [method all_settled] で作成した [Async] に対して [method wait] を呼び出す短縮表記です。[br]
@@ -388,10 +409,7 @@ static func wait_all(
 ## [codeblock]
 ## all_settled(drains, cancel).wait(cancel)
 ## [/codeblock]
-static func wait_all_settled(
-	drains: Array,
-	cancel: Cancel = null):
-
+static func wait_all_settled(drains: Array, cancel: Cancel = null) -> Variant:
 	return await all_settled(drains, cancel).wait(cancel)
 
 ## [method any] で作成した [Async] に対して [method wait] を呼び出す短縮表記です。[br]
@@ -401,10 +419,7 @@ static func wait_all_settled(
 ## [codeblock]
 ## any(drains, cancel).wait(cancel)
 ## [/codeblock]
-static func wait_any(
-	drains: Array,
-	cancel: Cancel = null):
-
+static func wait_any(drains: Array, cancel: Cancel = null) -> Variant:
 	return await any(drains, cancel).wait(cancel)
 
 ## [method race] で作成した [Async] に対して [method wait] を呼び出す短縮表記です。[br]
@@ -414,11 +429,95 @@ static func wait_any(
 ## [codeblock]
 ## race(drains, cancel).wait(cancel)
 ## [/codeblock]
-static func wait_race(
-	drains: Array,
-	cancel: Cancel = null):
-
+static func wait_race(drains: Array, cancel: Cancel = null) -> Variant:
 	return await race(drains, cancel).wait(cancel)
+
+## この [Async] の結果が [Async] である場合、
+## 指定した回数アンラップを試みた新たな [Async] を作成します。[br]
+## [br]
+## [b]使い方[/b]
+## [codeblock]
+## var async := Async.completed(Async.completed(10)) # Async に Async がネストされている
+## print(await async.unwrap().wait()) # 10
+## [/codeblock]
+func unwrap(depth := 1, cancel: Cancel = null) -> Async:
+	assert(0 <= depth)
+	return \
+		canceled() \
+		if cancel != null and cancel.is_requested or is_canceled else \
+		self \
+		if depth == 0 else \
+		NesinkronaUnwrapAsync.new(self, cancel, depth)
+
+## この [Async] が完了した場合、
+## 指定したコルーチン (もしくは関数) の戻り値を結果として完了する新たな [Async] を作成します。[br]
+## [br]
+## 前の結果を写像する場合 ([method Array.map] 的な使い方) や、
+## 結果から別のコルーチンへ処理を渡す場合に使うことができます。[br]
+## [br]
+## [b]補足[/b][br]
+## 第 1 引数 [code]coroutine[/code] は引数を 1 つ受け取る
+## [Callable] でなくてはなりません。この引数には直前の結果が渡されます。[br]
+## [br]
+## [b]使い方[/b]
+## [codeblock]
+## var async := Async.completed(10).then(func(result): return result * result)
+## print(await async.wait()) # 100
+## [/codeblock]
+func then(coroutine: Callable, cancel: Cancel = null) -> Async:
+	return NesinkronaThenAsync.new(self, cancel, coroutine)
+
+## この [Async] が完了した場合、
+## 指定したコルーチン (もしくは関数) を呼び出し結果を待機する新たな [Async] を作成します。[br]
+## [br]
+## [b]補足[/b][br]
+## 第 1 引数 [code]coroutine[/code] は引数を 3 つ受け取る
+## [Callable] でなくてはなりません。この引数には直前の結果、
+## 完了コールバック、キャンセルコールバックが渡されます。[br]
+## [br]
+## [b]使い方[/b]
+## [codeblock]
+## var async := Async.completed(10).then_callback(func(result, complete: Callable, cancel: Callable):
+##     complete.call(result * result))
+## print(await async.wait()) # 100
+## [/codeblock]
+func then_callback(coroutine: Callable, cancel: Cancel = null, unbind_cancel := false) -> Async:
+	return NesinkronaThenCallbackAsync.new(self, cancel, coroutine, unbind_cancel)
+
+## [b](アドオン内もしくは実装内でのみ使用)[/b]
+## この関数ではなく [member is_completed] もしくは [member is_canceled] を
+## 使うようにしてください。将来名前が変わる可能性があります。
+func get_state() -> int:
+	#
+	# 継承先で実装する必要があります。
+	#
+
+	assert(false)
+	return STATE_PENDING
+
+## この待機可能な単位が完了もしくはキャンセルされるまで待機しその結果を返します。[br]
+## [br]
+## キャンセルされた場合の結果は必ず null となりますが、これは
+## キャンセルされたかどうかの判断にはなりません。キャンセルされる可能性がある場合、
+## [member is_completed] もしくは [member is_canceled] を確認する必要があります。[br]
+## [br]
+## [b]補足[/b][br]
+## 状態が [STATE_PENDING] もしくは [STATE_PENDING_WITH_WAITERS] のとき
+## 第 1 引数 [code]cancel[/code] に [Cancel] を指定しキャンセルを要求すると、
+## 状態は [STATE_CANCELED] へ移行します。[br]
+## [br]
+## [b]使い方[/b]
+## [codeblock]
+## var async: Async = ...
+## var result = async.wait()
+## [/codeblock]
+func wait(cancel: Cancel = null) -> Variant:
+	#
+	# 継承先で実装する必要があります。
+	#
+
+	assert(false)
+	return await null
 
 #-------------------------------------------------------------------------------
 

@@ -34,12 +34,19 @@ var is_requested: bool:
 ## タイムアウトするとキャンセルが要求されるキャンセルを作成します。
 static func timeout(timeout_: float) -> Cancel:
 	var cancel := new()
-	NesinkronaCanon.create_timer(timeout_).timeout.connect(cancel.request)
+	NesinkronaAsyncBase \
+		.get_tree() \
+		.create_timer(timeout_) \
+		.timeout \
+		.connect(cancel.request)
 	return cancel
 
 ## キャンセルされた状態のキャンセルを作成します。
 static func canceled() -> Cancel:
-	return NesinkronaCanon.create_canceled_cancel()
+	if _canceled == null:
+		_canceled = new()
+		_canceled.request()
+	return _canceled
 
 ## キャンセルを要求します。
 func request() -> void:
@@ -48,5 +55,7 @@ func request() -> void:
 		requested.emit()
 
 #-------------------------------------------------------------------------------
+
+static var _canceled: Cancel
 
 var _is_requested := false
