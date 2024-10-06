@@ -12,12 +12,8 @@ config_version=5
 
 config/name="godot-nesink"
 config/description="Pseudo (task based) asynchronous patterns for Godot 4."
-run/main_scene="res://tests/Test_AsyncGenerator.tscn"
-config/features=PackedStringArray("4.0")
-
-[autoload]
-
-NesinkronaCanon="*res://addons/godot-nesink/NesinkronaCanon.gd"
+run/main_scene="res://Test_Task.tscn"
+config/features=PackedStringArray("4.3")
 
 [editor_plugins]
 
