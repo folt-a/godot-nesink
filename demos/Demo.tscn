@@ -23,12 +23,12 @@ offset_bottom = 776.0
 metadata/_edit_lock_ = true
 
 [node name="Line1" type="Label" parent="Background"]
+auto_translate_mode = 2
 layout_mode = 0
 offset_left = -160.0
 offset_top = -93.0
 offset_right = 992.0
 offset_bottom = 52.0
-auto_translate = false
 theme_override_colors/font_color = Color(0.478431, 0.478431, 0.478431, 1)
 theme_override_colors/font_outline_color = Color(1, 1, 1, 1)
 theme_override_constants/outline_size = 2
@@ -41,12 +41,12 @@ visible_ratio = 0.0
 metadata/_edit_lock_ = true
 
 [node name="Line2" type="Label" parent="Background"]
+auto_translate_mode = 2
 layout_mode = 0
 offset_left = -160.0
 offset_top = 51.0
 offset_right = 992.0
 offset_bottom = 196.0
-auto_translate = false
 theme_override_colors/font_color = Color(0.478431, 0.478431, 0.478431, 1)
 theme_override_colors/font_outline_color = Color(1, 1, 1, 1)
 theme_override_constants/outline_size = 2
@@ -59,12 +59,12 @@ visible_ratio = 0.0
 metadata/_edit_lock_ = true
 
 [node name="Line3" type="Label" parent="Background"]
+auto_translate_mode = 2
 layout_mode = 0
 offset_left = -160.0
 offset_top = 195.0
 offset_right = 992.0
 offset_bottom = 340.0
-auto_translate = false
 theme_override_colors/font_color = Color(0.478431, 0.478431, 0.478431, 1)
 theme_override_colors/font_outline_color = Color(1, 1, 1, 1)
 theme_override_constants/outline_size = 2
@@ -77,12 +77,12 @@ visible_ratio = 0.0
 metadata/_edit_lock_ = true
 
 [node name="Line4" type="Label" parent="Background"]
+auto_translate_mode = 2
 layout_mode = 0
 offset_left = -160.0
 offset_top = 339.0
 offset_right = 992.0
 offset_bottom = 484.0
-auto_translate = false
 theme_override_colors/font_color = Color(0.478431, 0.478431, 0.478431, 1)
 theme_override_colors/font_outline_color = Color(1, 1, 1, 1)
 theme_override_constants/outline_size = 2
