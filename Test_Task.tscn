@@ -236,7 +236,7 @@ metadata/_edit_group_ = true
 custom_minimum_size = Vector2(0, 32)
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
-text = "1.6.0 features:"
+text = "1.0.2 features:"
 vertical_alignment = 1
 
 [node name="Defer" type="CheckBox" parent="Features/Version_1_0_2"]
